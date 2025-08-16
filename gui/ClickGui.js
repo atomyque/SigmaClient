@@ -12,7 +12,7 @@ let incrementamount = 0.5
 let defaultscale = 0.65
 let defaultslidelenght = 150
 
-class Module {
+export class Module {
      static all = []
      static catorder = []
 
@@ -408,6 +408,7 @@ class Module {
 
      loadModules() {
           const currentmodule = data.modules.find(mod => mod.name === this.name && mod.category === this.category)
+          if (!currentmodule) return
 
           if (!data.modules.some(mod => mod.name === this.name && mod.category === this.category)) {
                this.width = Module.getSharedCategoryCoords(currentmodule.category)[2]
@@ -568,7 +569,7 @@ register("worldLoad", () => {
      })
 
      Module.all.forEach(e => {
-          // e.loadModules()
+          e.loadModules()
      })
 })
 
@@ -593,23 +594,25 @@ gui.registerDraw(() => {
      })
 })
 
-// let b = 255
+let b = 255
 
-// register("command", (...args) => (b = args)).setName("b")
+register("command", (...args) => (b = args)).setName("b")
 
 // function drawcolorSpectre(width, height) {
-//      let realWidth = Client.getMinecraft().field_71443_c
-//      let guiWidth = Renderer.screen.getWidth()
+//      const t = new Thread(() => {
+//           let realWidth = Client.getMinecraft().field_71443_c
+//           let guiWidth = Renderer.screen.getWidth()
 
-//      let pixelSize = 1 / (realWidth / guiWidth)
+//           let pixelSize = 1 / (realWidth / guiWidth)
 
-//      Renderer.getRainbow(1, 10)
-//      ChatLib.chat((255 / width) * 5)
-//      for (let r = 0; r <= 255; r += (255 / width) * 5) {
-//           for (let g = 0; g <= 255; g += (255 / height) * 5) {
-//                Renderer.drawRect(Renderer.color(r, g, b, 255), ((r * pixelSize) / 255) * width, ((g * pixelSize) / 255) * height, pixelSize * 5, pixelSize * 5)
+//           Renderer.getRainbow(1, 10)
+//           // ChatLib.chat((255 / width) * 5)
+//           for (let r = 0; r <= 255; r += (255 / width) * 5) {
+//                for (let g = 0; g <= 255; g += (255 / height) * 5) {
+//                     Renderer.drawRect(Renderer.color(r, g, b, 255), ((r * pixelSize) / 255) * width, ((g * pixelSize) / 255) * height, pixelSize * 5, pixelSize * 5)
+//                }
 //           }
-//      }
+//      }).start()
 // }
 
 // register("renderOverlay", () => {
@@ -638,7 +641,7 @@ const moduleclick = register("clicked", (mx, my, button, down) => {
                if (hovering(mx, my, module.getModulePos()[0], module.getModulePos()[1], module.getModulePos()[2], module.getModulePos()[3]) && button == 1 && down && !sliding) {
                     if (module.getNameOrder().length == 0) return
 
-                    defaultslidelenght = ClickGui.sliders["Sliding duration"].value
+                    // defaultslidelenght = module.sliders["Sliding duration"].value
                     if (!module.indetails) {
                          module.moduleanimation(module.getNameOrder().length, defaultslidelenght, 1, module.name)
                          Module.getCategoryContent(category).forEach((m, idx) => {
@@ -693,6 +696,7 @@ function sliderdrag(slidername) {
 const settingclick = register("clicked", (mx, my, button, down) => {
      Module.getCategories().forEach(category => {
           Module.getCategoryContent(category).forEach((module, index) => {
+               if (!module.indetails) return
                module.getNameOrder().forEach((name, index) => {
                     if (
                          hovering(mx, my, module.getModulePos()[0], module.caty + module.pos * module.height + index * module.height + details[module.name] * module.height - module.getNameOrder().length * module.height + module.height * 2, module.getModulePos()[2], module.getModulePos()[3]) &&
@@ -867,4 +871,10 @@ const scroll = register("scrolled", (mx, my, dirrection) => {
                Module.setSharedCategoryScale(category, Module.getSharedCategoryCoords(category)[4] - Module.getSharedCategoryCoords(category)[4] / 15)
           }
      })
+})
+
+const kb = new KeyBind("Open Sigma Click Gui", Keyboard.KEY_RCONTROL, "Sigma Client")
+
+kb.registerKeyPress(() => {
+     gui.open()
 })

@@ -1,0 +1,35 @@
+{
+    "modules": [
+        {
+            "category": "Dungeons",
+            "name": "Party Finder Highlight",
+            "toggled": false,
+            "switches": {},
+            "sliders": {},
+            "paramorder": [],
+            "scale": 0.6471111111111111,
+            "catx": 8.166664123535156,
+            "caty": 9.332061767578125,
+            "height": 9.706666666666667,
+            "width": 113.56800000000001
+        },
+        {
+            "category": "Dungeons",
+            "name": "Mask Timer Hud",
+            "toggled": true,
+            "switches": {
+                "Toggle Everywhere": false
+            },
+            "sliders": {},
+            "paramorder": [
+                "Toggle Everywhere",
+                "Move Hud"
+            ],
+            "scale": 0.6471111111111111,
+            "catx": 8.166664123535156,
+            "caty": 9.332061767578125,
+            "height": 9.706666666666667,
+            "width": 113.56800000000001
+        }
+    ]
+}
