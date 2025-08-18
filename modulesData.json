@@ -3,7 +3,7 @@
         {
             "category": "Misc",
             "name": "Server Freeze Indicator",
-            "toggled": true,
+            "toggled": false,
             "switches": {},
             "sliders": {
                 "Threshold": {
@@ -17,15 +17,15 @@
                 "Move Display"
             ],
             "scale": 0.65,
-            "catx": 4.833324432373047,
-            "caty": 8.33013916015625,
+            "catx": 6.5,
+            "caty": 10,
             "height": 9.75,
             "width": 125.775
         },
         {
             "category": "Dungeons",
             "name": "Party Finder Highlight",
-            "toggled": true,
+            "toggled": false,
             "switches": {},
             "sliders": {
                 "PB required": {
@@ -46,20 +46,20 @@
         {
             "category": "Misc",
             "name": "Wardrobe Keybinds",
-            "toggled": true,
+            "toggled": false,
             "switches": {},
             "sliders": {},
             "paramorder": [],
             "scale": 0.65,
-            "catx": 4.833324432373047,
-            "caty": 8.33013916015625,
+            "catx": 6.5,
+            "caty": 10,
             "height": 9.75,
             "width": 125.775
         },
         {
             "category": "Dungeons",
             "name": "Positional Alerts",
-            "toggled": true,
+            "toggled": false,
             "switches": {
                 "Send in chat": true,
                 "Show on screen": true
@@ -79,7 +79,7 @@
         {
             "category": "Dungeons",
             "name": "Mask Timer Hud",
-            "toggled": true,
+            "toggled": false,
             "switches": {
                 "Toggle Everywhere": false
             },
@@ -97,7 +97,7 @@
         {
             "category": "Misc",
             "name": "Control Close",
-            "toggled": true,
+            "toggled": false,
             "switches": {
                 "Equipment": true,
                 "Wardrobe": true
@@ -108,15 +108,15 @@
                 "Wardrobe"
             ],
             "scale": 0.65,
-            "catx": 4.833324432373047,
-            "caty": 8.33013916015625,
+            "catx": 6.5,
+            "caty": 10,
             "height": 9.75,
             "width": 125.775
         },
         {
             "category": "Dungeons",
             "name": "Leap alerts",
-            "toggled": true,
+            "toggled": false,
             "switches": {
                 "Send in chat": true,
                 "Show classes": true,
@@ -139,17 +139,17 @@
         {
             "category": "Misc",
             "name": "Click Gui",
-            "toggled": true,
+            "toggled": false,
             "switches": {
-                "Simplified Name": true
+                "Simplified Name": false
             },
             "sliders": {},
             "paramorder": [
                 "Simplified Name"
             ],
             "scale": 0.65,
-            "catx": 4.833324432373047,
-            "caty": 8.33013916015625,
+            "catx": 6.5,
+            "caty": 10,
             "height": 9.75,
             "width": 125.775
         }

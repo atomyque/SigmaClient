@@ -574,7 +574,8 @@ register("worldLoad", () => {
 })
 
 let teststr = ""
-const image = new Image("sigma.png")
+
+const image = new Image.fromFile("./config/Chattriggers/modules/SigmaClient/images/sigma.png")
 
 // Usage:
 

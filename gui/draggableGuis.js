@@ -182,7 +182,7 @@ let data = new PogObject("SigmaClient", { gui: [] }, "gui.json")
 
 register("worldLoad", () => {
      guiPiece.all.forEach(gui => {
-          // gui.loadGui()
+          gui.loadGui()
      })
 })
 
