@@ -184,7 +184,7 @@ export class Module {
           Renderer.drawString(
                this.name,
                Module.getSharedCategoryCoords(this.category)[0] / modulescale + Module.getSharedCategoryCoords(this.category)[2] / 2 / modulescale - Renderer.getStringWidth(this.name) / 2,
-               Module.getSharedCategoryCoords(this.category)[1] / modulescale + (this.pos * this.height) / modulescale + this.height / modulescale - 5 + this.height / 2 / modulescale,
+               Module.getSharedCategoryCoords(this.category)[1] / modulescale + (this.pos * this.height) / modulescale + this.height / modulescale - 4 + this.height / 2 / modulescale,
                false
           )
           modulescale = modulescale / this.scale
@@ -234,7 +234,7 @@ export class Module {
                          toggledcolor,
                          this.catx,
                          this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 3 + (this.height - this.height / 0.8),
-                         (this.width * (this.sliders[name].value - this.sliders[name].min)) / (this.sliders[name].max - this.sliders[name].min),
+                         (this.width * (this.sliders[name].value - this.sliders[name].min)) / (this.sliders[name].max - this.sliders[name].min) + 1.25 * this.scale,
                          this.height - this.height / 0.8
                     )
 
@@ -244,13 +244,13 @@ export class Module {
                     Renderer.drawString(
                          name,
                          Module.getSharedCategoryCoords(this.category)[0] / settingsscale + (this.width - this.width * 0.96) / settingsscale + 1.5,
-                         this.caty / settingsscale + (this.pos * this.height) / settingsscale + (index * this.height) / settingsscale + (details[this.name] * this.height) / settingsscale - (this.getNameOrder().length * this.height) / settingsscale + (this.height * 2) / settingsscale,
+                         this.caty / settingsscale + (this.pos * this.height) / settingsscale + (index * this.height) / settingsscale + (details[this.name] * this.height) / settingsscale - (this.getNameOrder().length * this.height) / settingsscale + (this.height * 2) / settingsscale + 1.25,
                          false
                     )
                     Renderer.drawString(
                          valuetostring,
                          Module.getSharedCategoryCoords(this.category)[0] / settingsscale + this.width / settingsscale - Renderer.getStringWidth(valuetostring) - 1.5,
-                         this.caty / settingsscale + (this.pos * this.height) / settingsscale + (index * this.height) / settingsscale + (details[this.name] * this.height) / settingsscale - (this.getNameOrder().length * this.height) / settingsscale + (this.height * 2) / settingsscale,
+                         this.caty / settingsscale + (this.pos * this.height) / settingsscale + (index * this.height) / settingsscale + (details[this.name] * this.height) / settingsscale - (this.getNameOrder().length * this.height) / settingsscale + (this.height * 2) / settingsscale + 1.25,
                          false
                     )
                     settingsscale = settingsscale / this.scale
@@ -878,3 +878,5 @@ const kb = new KeyBind("Open Sigma Click Gui", Keyboard.KEY_RCONTROL, "Sigma Cli
 kb.registerKeyPress(() => {
      gui.open()
 })
+
+export const clickGui = new Module("Misc", "Click Gui").addSwitch("Simplified Name", false)

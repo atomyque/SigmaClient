@@ -2,9 +2,33 @@
     "gui": [
         {
             "name": "maskTimer",
-            "x": 15.999994277954102,
-            "y": 158.01513671875,
-            "scale": 1.5208749999999998
+            "x": 10,
+            "y": 150,
+            "scale": 1
+        },
+        {
+            "name": "Server Freeze Indicator",
+            "x": 322,
+            "y": 206.5,
+            "scale": 2
+        },
+        {
+            "name": "Leap Alert",
+            "x": 320,
+            "y": 118.25,
+            "scale": 2.5
+        },
+        {
+            "name": "Leap Alert",
+            "x": 320,
+            "y": 138.25,
+            "scale": 1.5
+        },
+        {
+            "name": "Positional Alerts",
+            "x": 320,
+            "y": 206.5,
+            "scale": 2.5
         }
     ]
 }

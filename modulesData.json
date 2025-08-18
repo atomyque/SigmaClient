@@ -1,17 +1,80 @@
 {
     "modules": [
         {
+            "category": "Misc",
+            "name": "Server Freeze Indicator",
+            "toggled": true,
+            "switches": {},
+            "sliders": {
+                "Threshold": {
+                    "value": 500,
+                    "min": 150,
+                    "max": 2000
+                }
+            },
+            "paramorder": [
+                "Threshold",
+                "Move Display"
+            ],
+            "scale": 0.65,
+            "catx": 4.833324432373047,
+            "caty": 8.33013916015625,
+            "height": 9.75,
+            "width": 125.775
+        },
+        {
             "category": "Dungeons",
             "name": "Party Finder Highlight",
-            "toggled": false,
+            "toggled": true,
+            "switches": {},
+            "sliders": {
+                "PB required": {
+                    "value": 6,
+                    "min": 3,
+                    "max": 9
+                }
+            },
+            "paramorder": [
+                "PB required"
+            ],
+            "scale": 0.65,
+            "catx": 138.775,
+            "caty": 10,
+            "height": 9.75,
+            "width": 114.075
+        },
+        {
+            "category": "Misc",
+            "name": "Wardrobe Keybinds",
+            "toggled": true,
             "switches": {},
             "sliders": {},
             "paramorder": [],
-            "scale": 0.6471111111111111,
-            "catx": 8.166664123535156,
-            "caty": 9.332061767578125,
-            "height": 9.706666666666667,
-            "width": 113.56800000000001
+            "scale": 0.65,
+            "catx": 4.833324432373047,
+            "caty": 8.33013916015625,
+            "height": 9.75,
+            "width": 125.775
+        },
+        {
+            "category": "Dungeons",
+            "name": "Positional Alerts",
+            "toggled": true,
+            "switches": {
+                "Send in chat": true,
+                "Show on screen": true
+            },
+            "sliders": {},
+            "paramorder": [
+                "Send in chat",
+                "Show on screen",
+                "Move Positional Alerts"
+            ],
+            "scale": 0.65,
+            "catx": 138.775,
+            "caty": 10,
+            "height": 9.75,
+            "width": 114.075
         },
         {
             "category": "Dungeons",
@@ -23,13 +86,72 @@
             "sliders": {},
             "paramorder": [
                 "Toggle Everywhere",
-                "Move Hud"
+                "Move Display"
             ],
-            "scale": 0.6471111111111111,
-            "catx": 8.166664123535156,
-            "caty": 9.332061767578125,
-            "height": 9.706666666666667,
-            "width": 113.56800000000001
+            "scale": 0.65,
+            "catx": 138.775,
+            "caty": 10,
+            "height": 9.75,
+            "width": 114.075
+        },
+        {
+            "category": "Misc",
+            "name": "Control Close",
+            "toggled": true,
+            "switches": {
+                "Equipment": true,
+                "Wardrobe": true
+            },
+            "sliders": {},
+            "paramorder": [
+                "Equipment",
+                "Wardrobe"
+            ],
+            "scale": 0.65,
+            "catx": 4.833324432373047,
+            "caty": 8.33013916015625,
+            "height": 9.75,
+            "width": 125.775
+        },
+        {
+            "category": "Dungeons",
+            "name": "Leap alerts",
+            "toggled": true,
+            "switches": {
+                "Send in chat": true,
+                "Show classes": true,
+                "Render Boxes": true
+            },
+            "sliders": {},
+            "paramorder": [
+                "Send in chat",
+                "Show classes",
+                "Render Boxes",
+                "Move Leap Alerts",
+                "Move Leap Progress"
+            ],
+            "scale": 0.65,
+            "catx": 138.775,
+            "caty": 10,
+            "height": 9.75,
+            "width": 114.075
+        },
+        {
+            "category": "Misc",
+            "name": "Click Gui",
+            "toggled": true,
+            "switches": {
+                "Simplified Name": true
+            },
+            "sliders": {},
+            "paramorder": [
+                "Simplified Name"
+            ],
+            "scale": 0.65,
+            "catx": 4.833324432373047,
+            "caty": 8.33013916015625,
+            "height": 9.75,
+            "width": 125.775
         }
     ]
 }

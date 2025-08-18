@@ -28,8 +28,8 @@ export class guiPiece {
           guiPiece.all.push(this)
      }
 
-     addText(name, text, xoffset, yoffset, scale, centered) {
-          this.text[name] = { text, xoffset, yoffset, scale, centered }
+     addText(name, text, xoffset, yoffset, scale, centered, shadow = false) {
+          this.text[name] = { text, xoffset, yoffset, scale, centered, shadow }
           return this
      }
      addRect(name, xoffset, yoffset, width, height, color) {
@@ -41,6 +41,7 @@ export class guiPiece {
           this.render.register()
      }
      dontdraw() {
+          if (this.editing) return
           this.render.unregister()
      }
 
@@ -110,6 +111,7 @@ export class guiPiece {
      edit() {
           this.boundingBox()
           this.editing = true
+          this.draw()
           //   this.boundingBox()
 
           this.click.register()
@@ -117,6 +119,7 @@ export class guiPiece {
           const close = guiPiece.gui.registerClosed(() => {
                this.editing = false
                this.click.unregister()
+               this.dontdraw()
                this.drag.unregister()
                this.scroll.unregister()
                close.unregister()
@@ -146,7 +149,7 @@ export class guiPiece {
                const scl = this.scale
                Renderer.scale(scl, scl)
 
-               Renderer.drawString(this.text[name].text, this.x / scl + this.text[name].xoffset - (this.text[name].centered == true ? Renderer.getStringWidth(this.text[name].text) / 2 : 0), this.y / scl + this.text[name].yoffset - 4.5, false)
+               Renderer.drawString(this.text[name].text, this.x / scl + this.text[name].xoffset - (this.text[name].centered == true ? Renderer.getStringWidth(this.text[name].text) / 2 : 0), this.y / scl + this.text[name].yoffset - 4.5, this.text[name].shadow)
                Renderer.retainTransforms(false)
           })
           Object.keys(this.rect).forEach(name => {
@@ -179,7 +182,7 @@ let data = new PogObject("SigmaClient", { gui: [] }, "gui.json")
 
 register("worldLoad", () => {
      guiPiece.all.forEach(gui => {
-          gui.loadGui()
+          // gui.loadGui()
      })
 })
 

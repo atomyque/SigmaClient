@@ -18,11 +18,10 @@ let spirittext = ""
 let bonzotext = ""
 let phoenixtext = ""
 const maskTimerGui = new guiPiece("maskTimer", 10, 150, 1).addText("Spirit Text", "&dSpirit &f : &a✔", 0, 0, 1, false).addText("Bonzo Text", "&dBonzo &f : &a✔", 0, 10, 1, false).addText("Phoenix Text", "&dPhoenix &f : &a✔", 0, 20, 1, false)
-const maskTimerModule = new Module("Dungeons", "Mask Timer Hud").addSwitch("Toggle Everywhere", false).addButton("Move Hud", () => {
+const maskTimerModule = new Module("Dungeons", "Mask Timer Hud").addSwitch("Toggle Everywhere", false).addButton("Move Display", () => {
      guiPiece.gui.open()
      maskTimerGui.edit()
 })
-maskTimerGui.edit()
 
 register("tick", () => {
      if (maskTimerModule.toggled && (Dungeons.inBossRoom || maskTimerModule.switches["Toggle Everywhere"] == true)) {
@@ -34,6 +33,7 @@ register("packetReceived", packet => {
      const inventory = Player.getInventory()
      Client.scheduleTask(1, () => {
           if (Player.getContainer().getName() == "Your Equipment and Stats") {
+               closeafter.register()
                if (!Player.getContainer().getStackInSlot(11).getName().includes("Spirit Mask") && !Player.getContainer().getStackInSlot(11).getName().includes("Bonzo's Mask")) {
                     spiritactive = false
                     bonzoactive = false
