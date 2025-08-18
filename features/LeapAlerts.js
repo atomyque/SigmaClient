@@ -123,35 +123,36 @@ register("tick", () => {
      LeapAmount.text["text"].text = `${leapt.length >= inLeapBox()[1] ? "&a" : "&c"}${leapt.length} / ${inLeapBox()[1]} Leaped`
 })
 
+
+const EntityPlayer = net.minecraft.entity.player.EntityPlayer
+
+// Thanks @Noamm9 for helping me with the leap detection
 register("packetReceived", packet => {
-     if (Dungeons.inClear || Dungeons.inp3) {
-          if (!leapModule.toggled) return
+     if (!leapModule.toggled) return
+     if (!Dungeons.inClear && !Dungeons.inp3) return
           const entityID = packet.func_149451_c()
           const entity = World.getWorld().func_73045_a(entityID)
           if (!entity) return
-          if (entity instanceof net.minecraft.entity.player.EntityPlayer) {
-               let [pX, pY, pZ] = [Math.floor(packet.func_149449_d() / 32), Math.floor(packet.func_149448_e() / 32), Math.floor(packet.func_149446_f() / 32)]
-               const playername = new Entity(entity).getName()
+          if (!(entity instanceof EntityPlayer)) return
+     
+          const [pX, pY, pZ] = [Math.floor(packet.func_149449_d() / 32), Math.floor(packet.func_149448_e() / 32), Math.floor(packet.func_149446_f() / 32)]
+          const playername = new Entity(entity).getName()
 
-               // ChatLib.chat(`${new Entity(entity).getName()}, ${pX}, ${pY}, ${pZ}`)
-               // ChatLib.chat(distance2d(Player.getX(), Player.getZ(), pX, pZ))
-
-               if (distance2d(Player.getX(), Player.getZ(), pX, pZ) <= 2 && pY - 2 < Player.getY() && pY + 2 > Player.getY()) {
-                    if (leapModule.switches["Send in chat"]) chat(`&5${leapModule.switches["Show classes"] == true ? (typeof playerclasses[playername] == "undefined" ? "Unknown Player" : playerclasses[playername]) : playername} has leapt to you.`)
-                    if (inLeapBox() && !leapt.includes(playername)) {
-                         leapt.push(playername)
-                         if (leapt.length == inLeapBox()[1]) {
-                              LeapAlert.text["text"].text = `&aEveryone leapt`
-                              World.playSound("note.pling", 1, 2)
-                              timer = 500
-                              return
-                         }
-
-                         LeapAlert.text["text"].text = `&5${leapModule.switches["Show classes"] == true ? (typeof playerclasses[playername] == "undefined" ? "Unknown Player" : playerclasses[playername]) : playername} leapt`
-                         World.playSound("random.orb", 1, 2)
+          if (distance2d(Player.getX(), Player.getZ(), pX, pZ) <= 2 && pY - 2 < Player.getY() && pY + 2 > Player.getY()) {
+               if (leapModule.switches["Send in chat"]) chat(`&5${leapModule.switches["Show classes"] == true ? (typeof playerclasses[playername] == "undefined" ? "Unknown Player" : playerclasses[playername]) : playername} has leapt to you.`)
+               if (inLeapBox() && !leapt.includes(playername)) {
+                    leapt.push(playername)
+                    if (leapt.length == inLeapBox()[1]) {
+                         LeapAlert.text["text"].text = `&aEveryone leapt`
+                         World.playSound("note.pling", 1, 2)
                          timer = 500
-                         clock.register()
+                         return
                     }
+
+                    LeapAlert.text["text"].text = `&5${leapModule.switches["Show classes"] == true ? (typeof playerclasses[playername] == "undefined" ? "Unknown Player" : playerclasses[playername]) : playername} leapt`
+                    World.playSound("random.orb", 1, 2)
+                    timer = 500
+                    clock.register()
                }
           }
      }
@@ -268,9 +269,8 @@ function getclasses() {
      })
 }
 
-register("command", () => {
-     chat(playerclasses[Player.getName()])
-}).setName("tes")
+register("command", () => chat(playerclasses[Player.getName()])).setName("tes")
+
 register("worldLoad", () => {
      players = []
      World.getAllPlayers().forEach(p => {
@@ -280,62 +280,50 @@ register("worldLoad", () => {
      })
 })
 
-register("command", (...args) => {
-     playerclasses[args[0]] = args[1]
-}).setName("modify")
+register("command", (...args) => playerclasses[args[0]] = args[1]).setName("modify")
 
 let spot = []
 
 register("packetReceived", packet => {
      if (!PositionalAlertsModule.switches["Show on screen"] || !PositionalAlertsModule.toggled) return
      if (packet.func_149065_a(World.getWorld()) == null) return
-     const entitydata = packet.func_149065_a(World.getWorld()).toString()
+     const mcEntity = packet.func_149065_a(World.getWorld())
+     if (!mcEntity) return
+     const ctEntity = new Entity(mcEntity)
 
-     let nameMatch = entitydata.match(/'([^']+)'\/\d+/)
-     let username = nameMatch ? nameMatch[1] : null
+     const username = ctEntity.getName()
+     const [x, y, z] = [ctEntity.getX(), ctEntity.getY(), ctEntity.getZ()]
 
-     // Extract X, Y, Z
-     let coordsMatch = entitydata.match(/x=(-?\d+(\.\d+)?), y=(-?\d+(\.\d+)?), z=(-?\d+(\.\d+)?)/)
-     let x = coordsMatch ? parseFloat(coordsMatch[1]) : null
-     let y = coordsMatch ? parseFloat(coordsMatch[3]) : null
-     let z = coordsMatch ? parseFloat(coordsMatch[5]) : null
+     if (!players.includes(username)) return
+     if (!Dungeons.inBossRoom) return
+     
+     for (let box of leapBox.all) {
+          if (playerclasses[username] !== box.dungeonclass) continue
 
-     if (players.includes(username)) {
-          // ChatLib.chat(`Username: ${username}, X: ${x}, Y: ${y}, Z: ${z}`)
+          let minX = Math.min(box.x1, box.x2)
+          let maxX = Math.max(box.x1, box.x2)
 
-          if (!Dungeons.inBossRoom) return
-          const px = x
-          const py = y
-          const pz = z
+          let minY = Math.min(box.y1, box.y2)
+          let maxY = Math.max(box.y1, box.y2)
 
-          for (let box of leapBox.all) {
-               if (playerclasses[username] !== box.dungeonclass) continue
+          let minZ = Math.min(box.z1, box.z2)
+          let maxZ = Math.max(box.z1, box.z2)
 
-               let minX = Math.min(box.x1, box.x2)
-               let maxX = Math.max(box.x1, box.x2)
+          if (x >= minX - 0.5 && x <= maxX + 0.5 && y >= minY && y <= maxY && z >= minZ - 0.5 && z <= maxZ + 0.5 && !spot.includes(box.name)) {
+               // chat(`${username} is at ${box.location}`)
+               if (playerclasses[username] == "Mage") leapt.push(username)
+               otherclock.register()
+               othertimer = 750
+               PositionalAlerts.text["text"].text = `&a${username} is at ${box.location}`
+               World.playSound("note.pling", 1, 2)
 
-               let minY = Math.min(box.y1, box.y2)
-               let maxY = Math.max(box.y1, box.y2)
-
-               let minZ = Math.min(box.z1, box.z2)
-               let maxZ = Math.max(box.z1, box.z2)
-
-               if (px >= minX - 0.5 && px <= maxX + 0.5 && py >= minY && py <= maxY && pz >= minZ - 0.5 && pz <= maxZ + 0.5 && !spot.includes(box.name)) {
-                    // chat(`${username} is at ${box.location}`)
-
-                    if (playerclasses[username] == "Mage") leapt.push(username)
-                    otherclock.register()
-                    othertimer = 750
-                    PositionalAlerts.text["text"].text = `&a${username} is at ${box.location}`
-                    World.playSound("note.pling", 1, 2)
-
-                    spot.push(box.name)
-                    continue
-               }
-               if (!(px >= minX - 0.5 && px <= maxX + 0.5 && py >= minY && py <= maxY && pz >= minZ - 0.5 && pz <= maxZ + 0.5)) {
-                    // if (playerclasses[username] == "Mage") continue
-                    spot = spot.filter(player => player !== box.name)
-               }
+               spot.push(box.name)
+               continue
+          }
+          
+          if (!(x >= minX - 0.5 && x <= maxX + 0.5 && y >= minY && y <= maxY && z >= minZ - 0.5 && z <= maxZ + 0.5)) {
+               // if (playerclasses[username] == "Mage") continue
+               spot = spot.filter(player => player !== box.name)
           }
      }
 }).setFilteredClass(net.minecraft.network.play.server.S14PacketEntity)
