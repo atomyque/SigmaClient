@@ -1,9 +1,12 @@
+import { chat } from "./utils"
+
 export default new (class Dngs {
      constructor() {
           this.inp3 = false
           this.inBossRoom = false
           this.whats = 0
           this.inClear = false
+          this.inDungeon = false
 
           register("chat", () => {
                this.inp3 = true
@@ -17,7 +20,9 @@ export default new (class Dngs {
                this.inBossRoom = true
                this.inClear = false
           }).setCriteria("[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!")
-
+          register("chat", () => {
+               this.inDungeon = true
+          }).setCriteria("You are not allowed to use Potion Effects while in Dungeon, therefore all active effects have been paused and stored. They will be restored when you leave Dungeon!")
           register("chat", message => {
                const stage = message.match(/\((\d+)\/(\d+)\)/)
 
@@ -41,6 +46,7 @@ export default new (class Dngs {
                this.inp3 = false
                this.inBossRoom = false
                this.inClear = false
+               this.inDungeon = false
           })
 
           // getClass() {

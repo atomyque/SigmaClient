@@ -63,10 +63,6 @@ const wdkeybinds = register("packetReceived", packet => {
 //      // World.ChatLib.chat(packet.func_149062_c())
 // }).setFilteredClass(net.minecraft.network.play.server.S14PacketEntity)
 
-let ea = ""
-register("renderOverlay", () => {
-     Renderer.drawString(ea, 100, 100, true)
-})
 // register("packetReceived", packet => {
 //      if (packet.func_149065_a(World.getWorld()) === null) {
 //           return

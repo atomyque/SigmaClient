@@ -21,8 +21,8 @@
         {
             "name": "Leap Alert",
             "x": 320,
-            "y": 138.25,
-            "scale": 1.5
+            "y": 118.25,
+            "scale": 2.5
         },
         {
             "name": "Positional Alerts",

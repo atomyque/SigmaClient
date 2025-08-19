@@ -46,7 +46,7 @@ export class Module {
           Module.all.push(this)
      }
 
-     addSwitch(switchName, state) {
+     addSwitch(switchName, state = false) {
           if (typeof switchName !== "string") {
                throw new Error("Switch name must be a string")
           }
