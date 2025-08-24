@@ -13,8 +13,8 @@ const cleanTerm = new Module("Dungeons", "Clean Terms")
      })
 
 register("packetReceived", (packet, event) => {
-     if (!packet.func_179805_b().getText().includes("/")) return
      if (!Dungeons.inp3 || !cleanTerm.switches["Disable Titles"]) return
+     if (!packet.func_179805_b().getText().includes("/")) return
      cancel(event)
 }).setFilteredClass(net.minecraft.network.play.server.S45PacketTitle)
 
