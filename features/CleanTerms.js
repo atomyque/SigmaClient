@@ -1,7 +1,6 @@
 import Dungeons from "./utils/Dungeons"
 import { guiPiece } from "../gui/draggableGuis"
 import { Module } from "../gui/ClickGui"
-import { chat } from "./utils/utils"
 import { colors } from "./utils/utils"
 
 const cleanTerm = new Module("Dungeons", "Clean Terms")

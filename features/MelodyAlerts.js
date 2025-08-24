@@ -1,7 +1,7 @@
 import { Module } from "../gui/ClickGui"
 import { guiPiece } from "../gui/draggableGuis"
 import Dungeons from "./utils/Dungeons"
-import { chat, colors } from "./utils/utils"
+import { colors } from "./utils/utils"
 
 // .addSwitch("Play sound", true) will do if I remeber
 
