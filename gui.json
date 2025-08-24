@@ -2,14 +2,14 @@
     "gui": [
         {
             "name": "maskTimer",
-            "x": 9,
-            "y": 173.33334350585938,
+            "x": 10,
+            "y": 150,
             "scale": 1
         },
         {
             "name": "Server Freeze Indicator",
             "x": 322,
-            "y": 206.5,
+            "y": 210,
             "scale": 2
         },
         {
@@ -21,14 +21,26 @@
         {
             "name": "Leap Alert",
             "x": 320,
-            "y": 120,
-            "scale": 2.5
+            "y": 140,
+            "scale": 1.5
         },
         {
             "name": "Positional Alerts",
             "x": 320,
             "y": 210,
             "scale": 2.5
+        },
+        {
+            "name": "Term Counter",
+            "x": 320,
+            "y": 100,
+            "scale": 1
+        },
+        {
+            "name": "Melody hud",
+            "x": 320,
+            "y": 260,
+            "scale": 1
         }
     ]
 }

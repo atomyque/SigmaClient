@@ -1,4 +1,5 @@
 import PogObject from "../../PogData"
+import { chat } from "../features/utils/utils"
 
 const keyboard = Java.type("org.lwjgl.input.Keyboard")
 
@@ -23,6 +24,8 @@ export class guiPiece {
           this.biggesttextx = 0
           this.biggesttexty = 0
 
+          this.drawn = false
+
           this.rect = {}
           this.text = {}
           guiPiece.all.push(this)
@@ -39,9 +42,11 @@ export class guiPiece {
 
      draw() {
           this.render.register()
+          this.drawn = true
      }
      dontdraw() {
           if (this.editing) return
+          this.drawn = false
           this.render.unregister()
      }
 
@@ -111,15 +116,19 @@ export class guiPiece {
      edit() {
           this.boundingBox()
           this.editing = true
-          this.draw()
+
           //   this.boundingBox()
 
+          this.render.register()
           this.click.register()
           this.scroll.register()
           const close = guiPiece.gui.registerClosed(() => {
-               this.editing = false
+               guiPiece.all.forEach(e => {
+                    if (!e.drawn) e.render.unregister()
+                    e.editing = false
+               })
+
                this.click.unregister()
-               this.dontdraw()
                this.drag.unregister()
                this.scroll.unregister()
                close.unregister()
@@ -140,13 +149,14 @@ export class guiPiece {
           this.boundingBox()
           if (this.editing && guiPiece.gui.isOpen()) {
                Renderer.retainTransforms(false)
+
                Renderer.drawRect(Renderer.color(0, 0, 0, 50), this.smallestx, this.smallesty, this.biggesttextx - this.smallestx, this.biggesttexty - this.smallesty)
           }
 
           Object.keys(this.text).forEach(name => {
                Renderer.retainTransforms(true)
                //    ChatLib.chat(scl)
-               const scl = this.scale
+               const scl = this.scale * this.text[name].scale
                Renderer.scale(scl, scl)
 
                Renderer.drawString(this.text[name].text, this.x / scl + this.text[name].xoffset - (this.text[name].centered == true ? Renderer.getStringWidth(this.text[name].text) / 2 : 0), this.y / scl + this.text[name].yoffset - 4.5, this.text[name].shadow)
@@ -182,7 +192,7 @@ let data = new PogObject("SigmaClient", { gui: [] }, "gui.json")
 
 register("worldLoad", () => {
      guiPiece.all.forEach(gui => {
-          gui.loadGui()
+          // gui.loadGui()
      })
 })
 

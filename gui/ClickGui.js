@@ -577,8 +577,6 @@ let teststr = ""
 
 const image = new Image.fromFile("./config/Chattriggers/modules/SigmaClient/images/sigma.png")
 
-// Usage:
-
 gui.registerDraw(() => {
      Renderer.retainTransforms(true)
      const scale = 0.1
