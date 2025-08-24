@@ -56,7 +56,6 @@ register("packetReceived", packet => {
 register("chat", (level, pet) => {
      if (pet.includes("Phoenix")) {
           phoenixactive = true
-          phoenixlvl = level
           return
      }
 
@@ -92,8 +91,7 @@ register("chat", () => {
 
 register("chat", () => {
      Client.showTitle("&dPhoenix Pet used!", "", 10, 10, 10)
-     if (phoenixlvl) phoenixinvtimer = 4 * 20
-     else phoenixinvtimer = 4 * 20
+     phoenixinvtimer = 4 * 20
      phoenixtimer = 60 * 20
 }).setCriteria("Your Phoenix Pet saved you from certain death!")
 

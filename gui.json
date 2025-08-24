@@ -2,8 +2,8 @@
     "gui": [
         {
             "name": "maskTimer",
-            "x": 10,
-            "y": 150,
+            "x": 9,
+            "y": 173.33334350585938,
             "scale": 1
         },
         {
@@ -15,19 +15,19 @@
         {
             "name": "Leap Alert",
             "x": 320,
-            "y": 118.25,
+            "y": 120,
             "scale": 2.5
         },
         {
             "name": "Leap Alert",
             "x": 320,
-            "y": 118.25,
+            "y": 120,
             "scale": 2.5
         },
         {
             "name": "Positional Alerts",
             "x": 320,
-            "y": 206.5,
+            "y": 210,
             "scale": 2.5
         }
     ]

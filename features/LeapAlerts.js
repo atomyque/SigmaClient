@@ -42,6 +42,7 @@ const leapModule = new Module("Dungeons", "Leap alerts")
      .addSwitch("Show classes", true)
      .addSwitch("Render Boxes", true)
      .addSwitch("Hide Players On spots")
+     .addSwitch("Asume Core", false)
      .addButton("Move Leap Alerts", () => {
           guiPiece.gui.open()
           LeapAlert.edit()
@@ -60,9 +61,11 @@ const PositionalAlertsModule = new Module("Dungeons", "Positional Alerts")
      })
 
 const p2bers = new leapBox("p2bers", 59, 169, 44, 55, 169.25, 37, 2, "Berserk")
+const p3bers = new leapBox("p3bers", 93, 131, 45, 92, 133, 46, 1, "Berserk")
 const ss = new leapBox("Simon Says", 109, 120, 93, 107, 120.25, 95, 4, "Healer").addLocation("Simon Says")
 const ee2 = new leapBox("ee2", 59, 109, 132, 57, 109.25, 130, 4, "Archer").addLocation("EE2")
 const ee2safe = new leapBox("ee2safe", 48, 109, 122, 49, 109.25, 121, 4, "Archer").addLocation("EE2 Safe")
+const pm = new leapBox("pm", 58, 123.5, 122.5, 61, 123.75, 123, 1, "Healer").addLocation("Premine")
 const ee3 = new leapBox("ee3", 1, 108.5, 106, 3, 109.25, 103, 4, "Healer").addLocation("EE3")
 const ee3safe = new leapBox("ee3safe", 19, 121.5, 91, 18, 121.75, 100, 4, "Healer").addLocation("EE3 Safe")
 const core = new leapBox("core", 53, 115, 50, 56, 115.25, 53, 4, "Mage").addLocation("Core")
@@ -114,7 +117,7 @@ register("tick", () => {
 
      if (inLeapBox()[2] && anounced == false) {
           anounced = true
-          if (PositionalAlertsModule.switches["Send in chat"] && PositionalAlertsModule.toggled) ChatLib.command(`At ${inLeapBox()[2]}`)
+          if (PositionalAlertsModule.switches["Send in chat"] && PositionalAlertsModule.toggled) ChatLib.command(`pc At ${inLeapBox()[2]}`)
           // chat(`At ${inLeapBox()[2]}`)
      }
 
@@ -191,6 +194,7 @@ function inLeapBox() {
                box.b = 1
                currentspot = box.name
 
+               if (box.name === "ee3" && leapModule.switches["Asume Core"]) return [true, 3, box.location]
                return [true, box.amount, box.location]
           } else {
                box.r = 0
@@ -309,12 +313,12 @@ register("packetReceived", packet => {
 
           if (x >= minX - 0.5 && x <= maxX + 0.5 && y >= minY && y <= maxY && z >= minZ - 0.5 && z <= maxZ + 0.5 && !spot.includes(box.name)) {
                // chat(username)
-               if (!Object.keys(hiddenplayers).includes(username)) hiddenplayers[username] = box.name
+               if (!Object.keys(hiddenplayers).includes(username) && box.name !== "actualtunnel") hiddenplayers[username] = box.name
                if (playerclasses[username] !== box.dungeonclass) continue
-               if (playerclasses[username] == "Mage" && !leapt.includes(username)) leapt.push(username)
+               // if (playerclasses[username] == "Mage" && !leapt.includes(username)) leapt.push(username)
                spot.push(box.name)
 
-               if (box.location == false) return
+               if (box.location == false || !Dungeons.inp3) return
                otherclock.register()
                othertimer = 750
                PositionalAlerts.text["text"].text = `&a${leapModule.switches["Show classes"] == true ? (typeof playerclasses[username] == "undefined" ? "Unknown Player" : playerclasses[username]) : username} is at ${box.name}`
@@ -347,7 +351,7 @@ register("worldUnload", () => {
 })
 
 register("renderEntity", (entt, pos, partialtick, event) => {
-     if (!Object.keys(hiddenplayers).includes(entt.getName()) || !Dungeons.inBossRoom) return
+     if (!Object.keys(hiddenplayers).includes(entt.getName()) || !Dungeons.inBossRoom || !leapModule.switches["Hide Players On spots"]) return
      cancel(event)
 })
 
