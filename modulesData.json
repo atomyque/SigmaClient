@@ -7,7 +7,7 @@
             "switches": {},
             "sliders": {
                 "Threshold": {
-                    "value": 500,
+                    "value": 784.3121791688842,
                     "min": 150,
                     "max": 2000
                 }
@@ -16,11 +16,11 @@
                 "Threshold",
                 "Move Display"
             ],
-            "scale": 0.6765202618615795,
-            "catx": 91.83333969116211,
-            "caty": 107.68495178222656,
-            "height": 10.147803927923693,
-            "width": 130.90667067021565
+            "scale": 0.9509603847492006,
+            "catx": 42.741671752929676,
+            "caty": 50.74363708496094,
+            "height": 14.416632363265483,
+            "width": 184.01083444897034
         },
         {
             "category": "Dungeons",
@@ -29,7 +29,7 @@
             "switches": {},
             "sliders": {
                 "PB required": {
-                    "value": 5.596086063975706,
+                    "value": 6,
                     "min": 3,
                     "max": 9
                 }
@@ -37,11 +37,11 @@
             "paramorder": [
                 "PB required"
             ],
-            "scale": 0.7410208671511126,
-            "catx": 235.10834350585935,
-            "caty": 47.354095458984375,
-            "height": 11.115313007266662,
-            "width": 130.04916218502007
+            "scale": 0.876560360035785,
+            "catx": 228.24994277954102,
+            "caty": 66.02264404296875,
+            "height": 13.288722282769275,
+            "width": 153.8363431862807
         },
         {
             "category": "Misc",
@@ -50,11 +50,11 @@
             "switches": {},
             "sliders": {},
             "paramorder": [],
-            "scale": 0.6765202618615795,
-            "catx": 91.83333969116211,
-            "caty": 107.68495178222656,
-            "height": 10.147803927923693,
-            "width": 130.90667067021565
+            "scale": 0.9509603847492006,
+            "catx": 42.741671752929676,
+            "caty": 50.74363708496094,
+            "height": 14.416632363265483,
+            "width": 184.01083444897034
         },
         {
             "category": "Dungeons",
@@ -70,16 +70,16 @@
                 "Show on screen",
                 "Move Positional Alerts"
             ],
-            "scale": 0.7410208671511126,
-            "catx": 235.10834350585935,
-            "caty": 47.354095458984375,
-            "height": 11.115313007266662,
-            "width": 130.04916218502007
+            "scale": 0.876560360035785,
+            "catx": 228.24994277954102,
+            "caty": 66.02264404296875,
+            "height": 13.288722282769275,
+            "width": 153.8363431862807
         },
         {
             "category": "Dungeons",
             "name": "Mask Timer Hud",
-            "toggled": true,
+            "toggled": false,
             "switches": {
                 "Toggle Everywhere": false
             },
@@ -88,11 +88,11 @@
                 "Toggle Everywhere",
                 "Move Display"
             ],
-            "scale": 0.7410208671511126,
-            "catx": 235.10834350585935,
-            "caty": 47.354095458984375,
-            "height": 11.115313007266662,
-            "width": 130.04916218502007
+            "scale": 0.876560360035785,
+            "catx": 228.24994277954102,
+            "caty": 66.02264404296875,
+            "height": 13.288722282769275,
+            "width": 153.8363431862807
         },
         {
             "category": "Misc",
@@ -107,20 +107,20 @@
                 "Equipment",
                 "Wardrobe"
             ],
-            "scale": 0.6765202618615795,
-            "catx": 91.83333969116211,
-            "caty": 107.68495178222656,
-            "height": 10.147803927923693,
-            "width": 130.90667067021565
+            "scale": 0.9509603847492006,
+            "catx": 42.741671752929676,
+            "caty": 50.74363708496094,
+            "height": 14.416632363265483,
+            "width": 184.01083444897034
         },
         {
             "category": "Dungeons",
             "name": "Melody Alerts",
-            "toggled": false,
+            "toggled": true,
             "switches": {},
             "sliders": {
                 "Color": {
-                    "value": 10,
+                    "value": 7.383054533989084,
                     "min": 0,
                     "max": 15
                 }
@@ -129,53 +129,55 @@
                 "Color",
                 "Move Hud"
             ],
-            "scale": 0.7410208671511126,
-            "catx": 235.10834350585935,
-            "caty": 47.354095458984375,
-            "height": 11.115313007266662,
-            "width": 130.04916218502007
+            "scale": 0.876560360035785,
+            "catx": 228.24994277954102,
+            "caty": 66.02264404296875,
+            "height": 13.288722282769275,
+            "width": 153.8363431862807
         },
         {
             "category": "Dungeons",
             "name": "Clean Terms",
-            "toggled": true,
+            "toggled": false,
             "switches": {
                 "Disable Titles": true
             },
             "sliders": {
                 "Main Text Color": {
-                    "value": 4.661827403273415,
+                    "value": 7.443482728455429,
                     "min": 0,
                     "max": 15
                 },
                 "Subtitle Color": {
-                    "value": 4.376602576353745,
+                    "value": 6.010155231666159,
                     "min": 0,
                     "max": 15
                 }
             },
             "paramorder": [
                 "Main Text Color",
+                "test",
                 "Subtitle Color",
                 "Disable Titles",
+                "Main Coloreee",
                 "Move Hud"
             ],
-            "scale": 0.7410208671511126,
-            "catx": 235.10834350585935,
-            "caty": 47.354095458984375,
-            "height": 11.115313007266662,
-            "width": 130.04916218502007
+            "scale": 0.876560360035785,
+            "catx": 228.24994277954102,
+            "caty": 66.02264404296875,
+            "height": 13.288722282769275,
+            "width": 153.8363431862807
         },
         {
             "category": "Dungeons",
             "name": "Leap alerts",
-            "toggled": true,
+            "toggled": false,
             "switches": {
-                "Send in chat": false,
+                "Send in chat": true,
                 "Show classes": true,
                 "Render Boxes": true,
                 "Hide Players On spots": false,
-                "Asume Core": true
+                "Asume Core": false
             },
             "sliders": {},
             "paramorder": [
@@ -187,28 +189,36 @@
                 "Move Leap Alerts",
                 "Move Leap Progress"
             ],
-            "scale": 0.7410208671511126,
-            "catx": 235.10834350585935,
-            "caty": 47.354095458984375,
-            "height": 11.115313007266662,
-            "width": 130.04916218502007
+            "scale": 0.876560360035785,
+            "catx": 228.24994277954102,
+            "caty": 66.02264404296875,
+            "height": 13.288722282769275,
+            "width": 153.8363431862807
         },
         {
             "category": "Misc",
             "name": "Click Gui",
             "toggled": true,
             "switches": {
-                "Simplified Name": true
+                "Simplified Name": false
             },
-            "sliders": {},
+            "sliders": {
+                "Click Gui Height": {
+                    "value": 23.323194909820835,
+                    "min": 18.5,
+                    "max": 50
+                }
+            },
             "paramorder": [
-                "Simplified Name"
+                "Simplified Name",
+                "Click Gui Height",
+                "Reset Gui"
             ],
-            "scale": 0.6765202618615795,
-            "catx": 91.83333969116211,
-            "caty": 107.68495178222656,
-            "height": 10.147803927923693,
-            "width": 130.90667067021565
+            "scale": 0.9509603847492006,
+            "catx": 42.741671752929676,
+            "caty": 50.74363708496094,
+            "height": 14.416632363265483,
+            "width": 184.01083444897034
         }
     ]
 }

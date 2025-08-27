@@ -61,7 +61,7 @@ const PositionalAlertsModule = new Module("Dungeons", "Positional Alerts")
      })
 
 const p2bers = new leapBox("p2bers", 59, 169, 44, 55, 169.25, 37, 2, "Berserk")
-const p3bers = new leapBox("p3bers", 93, 131, 45, 92, 133, 46, 1, "Berserk")
+const p3bers = new leapBox("p3bers", 93, 131, 45, 92, 133, 47, 1, "Berserk")
 const ss = new leapBox("Simon Says", 109, 120, 93, 107, 120.25, 95, 4, "Healer").addLocation("Simon Says")
 const ee2 = new leapBox("ee2", 59, 109, 132, 57, 109.25, 130, 4, "Archer").addLocation("EE2")
 const ee2safe = new leapBox("ee2safe", 48, 109, 122, 49, 109.25, 121, 4, "Archer").addLocation("EE2 Safe")

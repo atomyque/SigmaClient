@@ -9,25 +9,25 @@
         {
             "name": "Server Freeze Indicator",
             "x": 322,
-            "y": 210,
+            "y": 206.5,
             "scale": 2
         },
         {
             "name": "Leap Alert",
             "x": 320,
-            "y": 120,
+            "y": 118.25,
             "scale": 2.5
         },
         {
             "name": "Leap Alert",
             "x": 320,
-            "y": 120,
+            "y": 118.25,
             "scale": 2.5
         },
         {
             "name": "Positional Alerts",
             "x": 320,
-            "y": 210,
+            "y": 206.5,
             "scale": 2.5
         },
         {
@@ -39,7 +39,7 @@
         {
             "name": "Melody hud",
             "x": 320,
-            "y": 260,
+            "y": 253,
             "scale": 1
         }
     ]

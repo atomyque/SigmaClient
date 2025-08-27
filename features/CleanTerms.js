@@ -1,19 +1,22 @@
 import Dungeons from "./utils/Dungeons"
 import { guiPiece } from "../gui/draggableGuis"
 import { Module } from "../gui/ClickGui"
-import { chat, colors } from "./utils/utils"
+import { colors } from "./utils/utils"
 
 const cleanTerm = new Module("Dungeons", "Clean Terms")
      .addSlider("Main Text Color", 10, 0, colors.length - 1)
+     .addColor("test", 255, 255, 0, 255, true)
      .addSlider("Subtitle Color", 10, 0, colors.length - 1)
      .addSwitch("Disable Titles", false)
+     .addColor("Main Coloreee", 100, 100, 100, 255, false)
      .addButton("Move Hud", () => {
           guiPiece.gui.open()
           termcounter.edit()
      })
 
 register("packetReceived", (packet, event) => {
-     if (!Dungeons.inp3 || !cleanTerm.switches["Disable Titles"] || !cleanTerm.toggled || !packet) return
+     if (!Dungeons.inp3 || !cleanTerm.switches["Disable Titles"] || !cleanTerm.toggled) return
+     if (packet.func_179807_a() !== "TITLE") return
      if (!packet.func_179805_b().getText().includes("/")) return
      cancel(event)
 }).setFilteredClass(net.minecraft.network.play.server.S45PacketTitle)
@@ -62,7 +65,7 @@ register("chat", message => {
 
           first = false
           termcounterHudActive = true
-          termcounter.text["text"].text = "&d" + stage[1] + "/" + stage[2]
+          termcounter.text["text"].text = maincolor + stage[1] + "/" + stage[2]
 
           if (stage[1] == stage[2]) {
                setTimeout(() => {
@@ -79,90 +82,3 @@ register("chat", message => {
 })
      .setCriteria("${message}")
      .setContains()
-
-register("renderOverlay", () => {
-     Renderer.color(255, 0, 0, 255)
-     Renderer.colorize(255, 255, 0, 255)
-
-     Renderer.drawString("azezaeaz", 100, 100)
-})
-
-function hsvToRgb(h, s, v) {
-     let r, g, b
-
-     s = Math.max(0, Math.min(1, s))
-     v = Math.max(0, Math.min(1, v))
-     h = h % 360
-     if (h < 0) h += 360
-
-     if (s === 0) {
-          r = g = b = v // gray
-     } else {
-          const hPrime = h / 60
-          const i = Math.floor(hPrime)
-          const f = hPrime - i
-          const p = v * (1 - s)
-          const q = v * (1 - s * f)
-          const t = v * (1 - s * (1 - f))
-
-          switch (i) {
-               case 0:
-                    r = v
-                    g = t
-                    b = p
-                    break
-               case 1:
-                    r = q
-                    g = v
-                    b = p
-                    break
-               case 2:
-                    r = p
-                    g = v
-                    b = t
-                    break
-               case 3:
-                    r = p
-                    g = q
-                    b = v
-                    break
-               case 4:
-                    r = t
-                    g = p
-                    b = v
-                    break
-               case 5:
-                    r = v
-                    g = p
-                    b = q
-                    break
-          }
-     }
-
-     return {
-          r: Math.round(r * 255),
-          g: Math.round(g * 255),
-          b: Math.round(b * 255)
-     }
-}
-
-register("renderOverlay", () => {
-     // Renderer.
-})
-
-let colorse = []
-
-function drawHue() {
-     for (let i = 0; i <= 360; i++) {
-          // chat(i)
-
-          // chat(i)
-          const { r, g, b } = hsvToRgb(i, 1, 1)
-          colorse[i] = { r, g, b }
-          // Renderer.drawRect(Renderer.color(r, g, b, 255), 100 + i, 100, 0.5, 20)
-     }
-}
-
-drawHue()
-
-function drawGradient(x, y, width, height, topleft, topright, buttomleft, bottomright) {}

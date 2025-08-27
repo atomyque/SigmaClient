@@ -3,6 +3,8 @@ import { Module } from "../gui/ClickGui"
 import { chat } from "./utils/utils"
 
 let parties = []
+let ok = {}
+let ok2 = {}
 let pbparties = []
 
 const partyFinderHighlight = new Module("Dungeons", "Party Finder Highlight").addSlider("PB required", 6, 3, 9)
@@ -13,12 +15,13 @@ const rdrslot = register("renderSlot", slot => {
      }
      const found = parties.includes(slot.getIndex())
      if (found) {
-          Renderer.drawRect(Renderer.color(0, 255, 0, 60), slot.getDisplayX(), slot.getDisplayY(), 16, 16)
+          Renderer.drawRect(Renderer.color(0, 255, 0, 100), slot.getDisplayX(), slot.getDisplayY(), 16, 16)
      }
-     // const foundpb = pbparties.includes(slot.getIndex())
-     // if (foundpb) {
-     //      Renderer.drawRect(Renderer.color(255, 255, 255, 255), slot.getDisplayX(), slot.getDisplayY(), 12, 16)
-     // }
+
+     if (ok[slot.getIndex()] >= 1) {
+          Renderer.translate(0, 0, 255)
+          Renderer.drawString(ok[slot.getIndex()], slot.getDisplayX() + 11, slot.getDisplayY() + 9, true)
+     }
 }).unregister()
 
 let pfclass = "Berserker"
@@ -45,6 +48,7 @@ register("packetReceived", packet => {
                const container = Player.getContainer()
                parties = []
                pbparties = []
+               ok = {}
                for (let i = 10; i < 34; i++) {
                     if (container.getStackInSlot(i) !== null && container.getStackInSlot(i).getName().includes("Party")) {
                          let hasclass = false
@@ -53,11 +57,16 @@ register("packetReceived", packet => {
                               .getLore()
                               .slice(7, 12)
                               .forEach(s => {
+                                   if (s.endsWith(")")) {
+                                        if (ok[i] >= 1) ok[i]++
+                                        else ok[i] = 1
+                                   }
                                    if (s.includes(`§e${pfclass}§b`)) {
                                         hasclass = true
                                         return
                                    }
                               })
+
                          if (!hasclass) {
                               parties.push(i)
                          }

@@ -2,12 +2,38 @@ import PogObject from "../../PogData"
 const defaultcolor = Renderer.color(40, 40, 40, 255)
 const toggledcolor = Renderer.color(208, 124, 188, 255)
 const detailscolor = Renderer.color(34, 34, 34, 155)
+const expandcolor = Renderer.color(34, 34, 34, 100)
+import Font from "../../FontLib"
+const fontb = new Font("SigmaClient/resources/MontserratBold.otf", 57)
+const fontsb = new Font("SigmaClient/resources/MontserratSemibold.otf", 57)
+const color = Java.type("java.awt.Color")
+
+function drawStringSemiBold(text, x, y, scale = 1, centeredx = false, centeredy = false) {
+     const scl = 1 / 3
+     const glbscale = scl * scale
+     Renderer.retainTransforms(true)
+     Renderer.scale(glbscale, glbscale)
+     fontsb.drawString(text, x / glbscale - 0.75 / glbscale - (centeredx === true ? fontsb.getWidth(text) / 2 : 0), y / glbscale - (centeredy === true ? fontsb.getHeight(text) / 2 : 0), new java.awt.Color(1, 1, 1, 1))
+
+     Renderer.retainTransforms(false)
+}
+function drawStringBold(text, x, y, scale = 1, centeredx = false, centeredy = false) {
+     const scl = 1 / 3
+     const glbscale = scl * scale
+     Renderer.retainTransforms(true)
+     Renderer.scale(glbscale, glbscale)
+     fontb.drawString(text, x / glbscale - 0.75 / glbscale - (centeredx === true ? fontb.getWidth(text) / 2 : 0), y / glbscale - (centeredy === true ? fontb.getHeight(text) / 2 : 0), new java.awt.Color(1, 1, 1, 1))
+
+     Renderer.retainTransforms(false)
+}
 
 let catscale = 2
 let modulescale = 1.5
-let settingsscale = 1
+let settingsscale = 1.15
 let sliding = false
 let details = {}
+let expand = {}
+let expanded = []
 let incrementamount = 0.5
 let defaultscale = 0.65
 let defaultslidelenght = 150
@@ -32,6 +58,7 @@ export class Module {
           this.toggled = false
           this.switches = {}
           this.sliders = {}
+          this.color = {}
           this.buttons = {}
           this.textBox = {}
           this.separator = []
@@ -125,6 +152,12 @@ export class Module {
           return this
      }
 
+     addColor(name, r, g, b, alpha, alphable = false) {
+          this.paramorder.push(name)
+          this.color[name] = { r, g, b, alpha, alphable }
+          return this
+     }
+
      getSlider(name) {
           return [this.sliders[name].value, this.sliders[name].min, this.sliders[name].max]
      }
@@ -148,6 +181,9 @@ export class Module {
           }
           if (this.textBox[name] !== undefined) {
                return "textbox"
+          }
+          if (this.color[name] !== undefined) {
+               return "color"
           } else {
                return undefined
           }
@@ -175,57 +211,62 @@ export class Module {
      }
 
      drawModule() {
-          Renderer.retainTransforms(false)
           Renderer.drawRect(this.toggled == true ? toggledcolor : defaultcolor, this.catx, this.caty + this.pos * this.height + this.height, this.width, this.height)
-
-          Renderer.retainTransforms(true)
-          modulescale = modulescale * this.scale
-          Renderer.scale(modulescale, modulescale)
-          Renderer.drawString(
-               this.name,
-               Module.getSharedCategoryCoords(this.category)[0] / modulescale + Module.getSharedCategoryCoords(this.category)[2] / 2 / modulescale - Renderer.getStringWidth(this.name) / 2,
-               Module.getSharedCategoryCoords(this.category)[1] / modulescale + (this.pos * this.height) / modulescale + this.height / modulescale - 4 + this.height / 2 / modulescale,
-               false
-          )
-          modulescale = modulescale / this.scale
-          Renderer.retainTransforms(false)
+          drawStringBold(this.name, Module.getSharedCategoryCoords(this.category)[0] + Module.getSharedCategoryCoords(this.category)[2] / 2, Module.getSharedCategoryCoords(this.category)[1] + this.pos * this.height + this.height + this.height / 2, modulescale * this.scale, true, true)
      }
 
      drawSettings() {
           this.getNameOrder().forEach((name, index) => {
+               const scale = settingsscale * this.scale
                if (this.caty + this.pos * this.height + this.height + index * this.height + this.height + details[this.name] * this.height - this.getNameOrder().length * this.height < this.caty + this.pos * this.height + this.height) return
-               Renderer.drawRect(detailscolor, this.catx, this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2, this.width, this.height)
+               Renderer.drawRect(
+                    detailscolor,
+                    this.catx,
+                    this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                    this.width,
+                    this.height
+               )
                if (this.getTypeByName(name) == "switch") {
-                    Renderer.retainTransforms(false)
                     Renderer.drawRect(
                          this.getSwitch(name) == true ? toggledcolor : defaultcolor,
                          this.catx,
-                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2,
-                         this.width - this.width * 0.96,
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                         this.width - this.width * 0.97,
                          this.height
                     )
 
-                    Renderer.retainTransforms(true)
-                    settingsscale = settingsscale * this.scale
-                    Renderer.scale(settingsscale, settingsscale)
-                    Renderer.drawString(
+                    drawStringSemiBold(
                          name,
-                         Module.getSharedCategoryCoords(this.category)[0] / settingsscale + (this.width - this.width * 0.96) / settingsscale + 1.5,
-                         this.caty / settingsscale + (this.pos * this.height) / settingsscale + (index * this.height) / settingsscale + (details[this.name] * this.height) / settingsscale - (this.getNameOrder().length * this.height) / settingsscale + (this.height * 2) / settingsscale + 4,
-                         false
+                         this.catx + (this.width - this.width * 0.97) * 1.3,
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2.5 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                         scale,
+                         false,
+                         true
                     )
-                    settingsscale = settingsscale / this.scale
-                    Renderer.retainTransforms(false)
                }
                if (this.getTypeByName(name) == "slider") {
                     Renderer.retainTransforms(false)
 
-                    const valuetostring = this.sliders[name].value.toFixed(this.sliders[name].max >= 100 ? 0 : this.sliders[name].max >= 10 ? 1 : this.sliders[name].max >= 1 ? 2 : 0)
-                    Renderer.drawRect(defaultcolor, this.catx, this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 3 + this.height - this.height / 0.8, this.width, this.height - this.height / 0.8)
+                    const valuetostring = this.sliders[name].value.toFixed(this.sliders[name].max >= 100 ? 0 : this.sliders[name].max >= 10 ? 1 : this.sliders[name].max >= 1 ? 2 : 0).toString()
+                    Renderer.drawRect(
+                         defaultcolor,
+                         this.catx,
+                         this.caty +
+                              this.pos * this.height +
+                              index * this.height +
+                              details[this.name] * this.height -
+                              this.getNameOrder().length * this.height +
+                              this.height * 3 +
+                              this.height -
+                              this.height / 0.8 +
+                              (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                         this.width,
+                         this.height - this.height / 0.8
+                    )
                     Renderer.drawRect(
                          defaultcolor,
                          this.catx + this.width - Renderer.getStringWidth(this.sliders[name].value.toFixed(this.sliders[name].max >= 100 ? 0 : this.sliders[name].max >= 10 ? 1 : this.sliders[name].max >= 1 ? 2 : 0)) * settingsscale * this.scale - 3 * settingsscale * this.scale,
-                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2,
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
                          Renderer.getStringWidth(this.sliders[name].value.toFixed(this.sliders[name].max >= 100 ? 0 : this.sliders[name].max >= 10 ? 1 : this.sliders[name].max >= 1 ? 2 : 0)) * settingsscale * this.scale + 3 * settingsscale * this.scale,
                          7.5 * settingsscale * this.scale
                     )
@@ -233,28 +274,35 @@ export class Module {
                     Renderer.drawRect(
                          toggledcolor,
                          this.catx,
-                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 3 + (this.height - this.height / 0.8),
+                         this.caty +
+                              this.pos * this.height +
+                              index * this.height +
+                              details[this.name] * this.height -
+                              this.getNameOrder().length * this.height +
+                              this.height * 3 +
+                              (this.height - this.height / 0.8) +
+                              (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
                          (this.width * (this.sliders[name].value - this.sliders[name].min)) / (this.sliders[name].max - this.sliders[name].min) + 1.25 * this.scale,
                          this.height - this.height / 0.8
                     )
-
-                    Renderer.retainTransforms(true)
-                    settingsscale = settingsscale * this.scale
-                    Renderer.scale(settingsscale, settingsscale)
-                    Renderer.drawString(
+                    drawStringSemiBold(
                          name,
-                         Module.getSharedCategoryCoords(this.category)[0] / settingsscale + (this.width - this.width * 0.96) / settingsscale + 1.5,
-                         this.caty / settingsscale + (this.pos * this.height) / settingsscale + (index * this.height) / settingsscale + (details[this.name] * this.height) / settingsscale - (this.getNameOrder().length * this.height) / settingsscale + (this.height * 2) / settingsscale + 1.25,
-                         false
+                         this.catx + (this.width - this.width * 0.97) * 1.3,
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2.5 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                         scale,
+                         false,
+                         true
                     )
-                    Renderer.drawString(
+
+                    const diff = (fontsb.getWidth(valuetostring) / 3) * scale
+                    drawStringSemiBold(
                          valuetostring,
-                         Module.getSharedCategoryCoords(this.category)[0] / settingsscale + this.width / settingsscale - Renderer.getStringWidth(valuetostring) - 1.5,
-                         this.caty / settingsscale + (this.pos * this.height) / settingsscale + (index * this.height) / settingsscale + (details[this.name] * this.height) / settingsscale - (this.getNameOrder().length * this.height) / settingsscale + (this.height * 2) / settingsscale + 1.25,
-                         false
+                         this.catx + this.width - diff,
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2.5 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) - 2 * scale,
+                         scale,
+                         false,
+                         true
                     )
-                    settingsscale = settingsscale / this.scale
-                    Renderer.retainTransforms(false)
                }
                if (this.getTypeByName(name) == "textbox") {
                     Renderer.retainTransforms(false)
@@ -262,7 +310,14 @@ export class Module {
                     Renderer.drawRect(
                          defaultcolor,
                          this.catx + this.width - Renderer.getStringWidth(this.textBox[name]) * settingsscale * this.scale - 3 * settingsscale * this.scale,
-                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + 4 * settingsscale * this.scale,
+                         this.caty +
+                              this.pos * this.height +
+                              index * this.height +
+                              details[this.name] * this.height -
+                              this.getNameOrder().length * this.height +
+                              this.height * 2 +
+                              4 * settingsscale * this.scale +
+                              (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
                          Renderer.getStringWidth(this.textBox[name]) * settingsscale * this.scale + 3 * settingsscale * this.scale,
                          7.5 * settingsscale * this.scale
                     )
@@ -273,50 +328,80 @@ export class Module {
                     Renderer.drawString(
                          name,
                          Module.getSharedCategoryCoords(this.category)[0] / settingsscale + (this.width - this.width * 0.96) / settingsscale + 1.5,
-                         this.caty / settingsscale + (this.pos * this.height) / settingsscale + (index * this.height) / settingsscale + (details[this.name] * this.height) / settingsscale - (this.getNameOrder().length * this.height) / settingsscale + (this.height * 2) / settingsscale + 4,
+                         this.caty / settingsscale +
+                              (this.pos * this.height) / settingsscale +
+                              (index * this.height) / settingsscale +
+                              (details[this.name] * this.height) / settingsscale -
+                              (this.getNameOrder().length * this.height) / settingsscale +
+                              (this.height * 2) / settingsscale +
+                              4 +
+                              (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) / settingsscale,
                          false
                     )
                     Renderer.drawString(
                          this.textBox[name],
                          Module.getSharedCategoryCoords(this.category)[0] / settingsscale + this.width / settingsscale - Renderer.getStringWidth(this.textBox[name]) - 1.5,
-                         this.caty / settingsscale + (this.pos * this.height) / settingsscale + (index * this.height) / settingsscale + (details[this.name] * this.height) / settingsscale - (this.getNameOrder().length * this.height) / settingsscale + (this.height * 2) / settingsscale + 4,
+                         this.caty / settingsscale +
+                              (this.pos * this.height) / settingsscale +
+                              (index * this.height) / settingsscale +
+                              (details[this.name] * this.height) / settingsscale -
+                              (this.getNameOrder().length * this.height) / settingsscale +
+                              (this.height * 2) / settingsscale +
+                              4 +
+                              (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) / settingsscale,
                          false
                     )
                     settingsscale = settingsscale / this.scale
                     Renderer.retainTransforms(false)
                }
                if (this.getTypeByName(name) == "button") {
-                    Renderer.retainTransforms(false)
-
-                    Renderer.retainTransforms(true)
-                    settingsscale = settingsscale * this.scale
-
-                    Renderer.scale(settingsscale, settingsscale)
-                    Renderer.drawString(
+                    drawStringSemiBold(
                          name,
-                         Module.getSharedCategoryCoords(this.category)[0] / settingsscale - Renderer.getStringWidth(name) / 2 + this.width / 2 / settingsscale,
-                         this.caty / settingsscale + (this.pos * this.height) / settingsscale + (index * this.height) / settingsscale + (details[this.name] * this.height) / settingsscale - (this.getNameOrder().length * this.height) / settingsscale + (this.height * 2) / settingsscale + 4,
-                         false
+                         this.catx + this.width / 2,
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2.5 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                         scale,
+                         true,
+                         true
                     )
-                    settingsscale = settingsscale / this.scale
-                    Renderer.retainTransforms(false)
                }
                if (this.getTypeByName(name) == "separator") {
                     Renderer.retainTransforms(false)
                     if (name == "") {
-                         Renderer.drawRect(defaultcolor, this.catx, this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + this.height / 2, this.width, (this.height / this.height) * 2.5)
+                         Renderer.drawRect(
+                              defaultcolor,
+                              this.catx,
+                              this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + this.height / 2 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                              this.width,
+                              (this.height / this.height) * 2.5
+                         )
                     } else {
                          Renderer.drawRect(
                               defaultcolor,
                               this.catx,
-                              this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + this.height / 2 - (this.height / this.height) * 2.5,
+                              this.caty +
+                                   this.pos * this.height +
+                                   index * this.height +
+                                   details[this.name] * this.height -
+                                   this.getNameOrder().length * this.height +
+                                   this.height * 2 +
+                                   this.height / 2 -
+                                   (this.height / this.height) * 2.5 +
+                                   (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
                               this.width / 2 - Renderer.getStringWidth(name) / 2 - (this.width / this.width) * 2,
                               (this.height / this.height) * 2.5
                          )
                          Renderer.drawRect(
                               defaultcolor,
                               this.catx + this.width - (this.width / 2 - Renderer.getStringWidth(name) / 2 - (this.width / this.width) * 2),
-                              this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + this.height / 2 - (this.height / this.height) * 2.5,
+                              this.caty +
+                                   this.pos * this.height +
+                                   index * this.height +
+                                   details[this.name] * this.height -
+                                   this.getNameOrder().length * this.height +
+                                   this.height * 2 +
+                                   this.height / 2 -
+                                   (this.height / this.height) * 2.5 +
+                                   (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
                               this.width / 2 - Renderer.getStringWidth(name) / 2 - (this.width / this.width) * 2,
                               (this.height / this.height) * 2.5
                          )
@@ -327,37 +412,166 @@ export class Module {
                          Renderer.drawString(
                               name,
                               Module.getSharedCategoryCoords(this.category)[0] / settingsscale - Renderer.getStringWidth(name) / 2 + this.width / 2 / settingsscale,
-                              this.caty / settingsscale + (this.pos * this.height) / settingsscale + (index * this.height) / settingsscale + (details[this.name] * this.height) / settingsscale - (this.getNameOrder().length * this.height) / settingsscale + (this.height * 2) / settingsscale + 5,
+                              this.caty / settingsscale +
+                                   (this.pos * this.height) / settingsscale +
+                                   (index * this.height) / settingsscale +
+                                   (details[this.name] * this.height) / settingsscale -
+                                   (this.getNameOrder().length * this.height) / settingsscale +
+                                   (this.height * 2) / settingsscale +
+                                   5 +
+                                   (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) / settingsscale,
                               false
                          )
                          settingsscale = settingsscale / this.scale
                          Renderer.retainTransforms(false)
                     }
                }
+               if (this.getTypeByName(name) == "color") {
+                    Renderer.retainTransforms(false)
+                    Renderer.drawRect(
+                         Renderer.color(this.color[name].r, this.color[name].g, this.color[name].b, this.color[name].alpha),
+                         this.catx + this.width - 32 * this.scale,
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + 2 * this.scale + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                         30 * this.scale,
+                         10 * this.scale
+                    )
+                    const hue = rgbToHsv(this.color[name].r, this.color[name].g, this.color[name].b).h * 360
+                    const saturation = rgbToHsv(this.color[name].r, this.color[name].g, this.color[name].b).s
+                    const brightness = rgbToHsv(this.color[name].r, this.color[name].g, this.color[name].b).v
+                    const huecolor = new color(hsvToRgb(hue, 1, 1).r / 255, hsvToRgb(hue, 1, 1).g / 255, hsvToRgb(hue, 1, 1).b / 255)
+
+                    if (expanded.includes(this.name + name)) {
+                         Renderer.drawRect(
+                              expandcolor,
+                              this.catx,
+                              this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 3 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                              this.width,
+                              this.height * (this.color[name].alphable === true ? 7 : 6)
+                         )
+                         drawSvBox(
+                              this.catx + 2 * this.scale,
+                              this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 3 + 2 * this.scale + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                              this.width - 4 * this.scale,
+                              this.height * 5 - 4 * this.scale,
+                              huecolor
+                         )
+
+                         Renderer.drawRect(
+                              Renderer.WHITE,
+                              this.catx + saturation * (this.width - 4 * this.scale),
+                              this.caty +
+                                   this.pos * this.height +
+                                   index * this.height +
+                                   details[this.name] * this.height -
+                                   this.getNameOrder().length * this.height -
+                                   3 * this.scale +
+                                   (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) +
+                                   this.height * 8 -
+                                   brightness * (this.height * 5 - 4 * this.scale),
+                              4 * this.scale,
+                              4 * this.scale
+                         )
+
+                         drawHueSlider(
+                              this.catx + 2 * this.scale,
+                              this.caty +
+                                   this.pos * this.height +
+                                   index * this.height +
+                                   details[this.name] * this.height -
+                                   this.getNameOrder().length * this.height +
+                                   this.height * 2 +
+                                   2 * this.scale +
+                                   (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) +
+                                   this.height * 6,
+                              this.width - 4 * this.scale,
+                              this.height - 4 * this.scale
+                         )
+
+                         Renderer.drawRect(
+                              Renderer.WHITE,
+                              this.catx + 1 * this.scale + (hue / 360) * (this.width - 4 * this.scale),
+                              this.caty +
+                                   this.pos * this.height +
+                                   index * this.height +
+                                   details[this.name] * this.height -
+                                   this.getNameOrder().length * this.height +
+                                   this.height * 2 +
+                                   1.5 * this.scale +
+                                   (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) +
+                                   this.height * 6,
+                              2 * this.scale,
+                              this.height - 3 * this.scale
+                         )
+                         if (this.color[name].alphable) {
+                              const clr = new color(this.color[name].r / 255, this.color[name].g / 255, this.color[name].b / 255, 1)
+                              const transparentclr = new color(this.color[name].r / 255, this.color[name].g / 255, this.color[name].b / 255, 0)
+                              drawGradient(
+                                   this.catx + 2 * this.scale,
+                                   this.caty +
+                                        this.pos * this.height +
+                                        index * this.height +
+                                        details[this.name] * this.height -
+                                        this.getNameOrder().length * this.height +
+                                        this.height * 2 +
+                                        2 * this.scale +
+                                        (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) +
+                                        this.height * 7,
+                                   this.width - 4 * this.scale,
+                                   this.height - 4 * this.scale,
+                                   transparentclr,
+                                   clr,
+                                   transparentclr,
+                                   clr
+                              )
+                              Renderer.drawRect(
+                                   Renderer.WHITE,
+                                   this.catx + 1 * this.scale + (this.color[name].alpha / 255) * (this.width - 4 * this.scale),
+                                   this.caty +
+                                        this.pos * this.height +
+                                        index * this.height +
+                                        details[this.name] * this.height -
+                                        this.getNameOrder().length * this.height +
+                                        this.height * 2 +
+                                        1.5 * this.scale +
+                                        (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) +
+                                        this.height * 7,
+                                   2 * this.scale,
+                                   this.height - 3 * this.scale
+                              )
+                         }
+                    }
+
+                    drawStringSemiBold(
+                         name,
+                         this.catx + (this.width - this.width * 0.97) * 1.3,
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2.5 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                         scale,
+                         false,
+                         true
+                    )
+               }
           })
      }
 
      static drawCategory(category) {
-          Renderer.retainTransforms(false)
           Renderer.drawRect(
                defaultcolor,
                this.getSharedCategoryCoords(category)[0],
-               this.getSharedCategoryCoords(category)[1] - this.getSharedCategoryCoords(category)[3] * 1.5 + this.getSharedCategoryCoords(category)[3],
+               this.getSharedCategoryCoords(category)[1] - this.getSharedCategoryCoords(category)[3] * 1.25 + this.getSharedCategoryCoords(category)[3],
                this.getSharedCategoryCoords(category)[2],
-               this.getSharedCategoryCoords(category)[3] * 1.5
+               this.getSharedCategoryCoords(category)[3] * 1.25
           )
 
-          Renderer.retainTransforms(true)
           catscale = catscale * Module.getSharedCategoryCoords(category)[4]
-          Renderer.scale(catscale, catscale)
-          Renderer.drawString(
+          drawStringBold(
                category,
-               this.getSharedCategoryCoords(category)[0] / catscale + this.getSharedCategoryCoords(category)[2] / 2 / catscale - Renderer.getStringWidth(category) / 2,
-               this.getSharedCategoryCoords(category)[1] / catscale + 2 - (this.getSharedCategoryCoords(category)[3] * 1.5) / catscale + this.getSharedCategoryCoords(category)[3] / catscale,
-               false
+               this.getSharedCategoryCoords(category)[0] + this.getSharedCategoryCoords(category)[2] / 2,
+               this.getSharedCategoryCoords(category)[1] - this.getSharedCategoryCoords(category)[3] * 1.5 + this.getSharedCategoryCoords(category)[3] * 2 - 0.75 * catscale,
+               catscale,
+               true,
+               true
           )
           catscale = catscale / Module.getSharedCategoryCoords(category)[4]
-          Renderer.retainTransforms(false)
      }
 
      moduleanimation(end, duration, sign, module) {
@@ -427,9 +641,9 @@ export class Module {
                     this.sliders[name].value = currentmodule.sliders[name].value
                }
           })
+          this.height = currentmodule.height
           this.width = currentmodule.width
           this.scale = currentmodule.scale
-          this.height = currentmodule.height
           this.catx = currentmodule.catx
           this.caty = currentmodule.caty
      }
@@ -504,7 +718,7 @@ export class Module {
                     }
                })
                this.setSharedCategoryScale(category, defaultscale)
-               this.setSharedCategoryHeight(category, 15 * defaultscale)
+               this.setSharedCategoryHeight(category, clickGui.sliders["Click Gui Height"].value * defaultscale * defaultscale)
                this.setSharedCategoryX(category, 10 + this.getSharedCategoryCoords(lastcat)[0] + this.getSharedCategoryCoords(lastcat)[2])
                this.setSharedCategoryY(category, 10)
                lastcat = category
@@ -575,7 +789,7 @@ register("worldLoad", () => {
 
 let teststr = ""
 
-const image = new Image.fromFile("./config/Chattriggers/modules/SigmaClient/images/sigma.png")
+const image = new Image.fromFile("./config/Chattriggers/modules/SigmaClient/resources/sigma.png")
 
 gui.registerDraw(() => {
      Renderer.retainTransforms(true)
@@ -605,7 +819,6 @@ register("command", (...args) => (b = args)).setName("b")
 //           let pixelSize = 1 / (realWidth / guiWidth)
 
 //           Renderer.getRainbow(1, 10)
-//           // ChatLib.chat((255 / width) * 5)
 //           for (let r = 0; r <= 255; r += (255 / width) * 5) {
 //                for (let g = 0; g <= 255; g += (255 / height) * 5) {
 //                     Renderer.drawRect(Renderer.color(r, g, b, 255), ((r * pixelSize) / 255) * width, ((g * pixelSize) / 255) * height, pixelSize * 5, pixelSize * 5)
@@ -650,9 +863,27 @@ const moduleclick = register("clicked", (mx, my, button, down) => {
                          })
                     }
                     if (module.indetails) {
+                         let count = 0
+
+                         Object.keys(module.color).forEach(c => {
+                              if (!expanded.includes(module.name + c)) return
+
+                              expand = Object.keys(expand).filter(key => key !== module.name + c)
+                              expanded = expanded.filter(key => key !== module.name + c)
+                              count += module.color[c].alphable === true ? 7 : 6
+                         })
+
+                         // expand = {}
+                         // expanded = []
+
+                         // Module.getCategoryContent(module.category).forEach((mdl, i) => {
+                         //      if (i <= index) return
+                         //      mdl.pos += expanded.includes(module.name + ) ? -3 : 0
+                         // })
                          module.moduleanimation(-module.getNameOrder().length, defaultslidelenght, -1, module.name)
                          Module.getCategoryContent(category).forEach((m, idx) => {
                               if (idx <= index) return
+                              m.pos -= count
 
                               m.slideanimation(-module.getNameOrder().length, defaultslidelenght, -1)
                          })
@@ -694,11 +925,184 @@ function sliderdrag(slidername) {
 
 const settingclick = register("clicked", (mx, my, button, down) => {
      Module.getCategories().forEach(category => {
-          Module.getCategoryContent(category).forEach((module, index) => {
+          Module.getCategoryContent(category).forEach((module, idx) => {
                if (!module.indetails) return
+
                module.getNameOrder().forEach((name, index) => {
+                    if (expanded.includes(module.name + name)) {
+                         if (
+                              hovering(
+                                   mx,
+                                   my,
+                                   module.catx + 2 * module.scale,
+                                   module.caty +
+                                        module.pos * module.height +
+                                        index * module.height +
+                                        details[module.name] * module.height -
+                                        module.getNameOrder().length * module.height +
+                                        module.height * 3 +
+                                        1 * module.scale +
+                                        (Object.keys(expand).includes(module.name + name) ? expand[module.name + name] * module.height : 0),
+                                   module.width - 4 * module.scale,
+                                   module.height * 5 - 4 * module.scale
+                              ) &&
+                              button == 0 &&
+                              down
+                         ) {
+                              // const xm = (mx - module.catx - 1 * module.scale) / (module.width - 2 * module.scale)
+                              // ChatLib.chat(xm)
+
+                              const xm = (mx - module.catx - 1 * module.scale) / (module.width - 2 * module.scale)
+                              const ym = Math.abs(
+                                   1 -
+                                        (my -
+                                             (module.caty +
+                                                  module.pos * module.height +
+                                                  index * module.height +
+                                                  details[module.name] * module.height -
+                                                  module.getNameOrder().length * module.height +
+                                                  module.height * 3 +
+                                                  1 * module.scale +
+                                                  (Object.keys(expand).includes(module.name + name) ? expand[module.name + name] * module.height : 0))) /
+                                             (module.height * 5 - 4 * module.scale)
+                              )
+                              const h = rgbToHsv(module.color[name].r, module.color[name].g, module.color[name].b).h
+                              const v = rgbToHsv(module.color[name].r, module.color[name].g, module.color[name].b).v
+
+                              module.color[name].r = hsvToRgb(h * 360, xm, ym).r
+                              module.color[name].g = hsvToRgb(h * 360, xm, ym).g
+                              module.color[name].b = hsvToRgb(h * 360, xm, ym).b
+
+                              // const clik = register("clicked", (mmx, mmy, button, down) => {
+                              //      if (button === 0 && !down) {
+                              //           drag.unregister()
+                              //           clik.unregister()
+                              //      }
+                              // })
+                              // const drag = register("dragged", (dx, dy, mmx, mmy, button) => {
+                              //      let xm = (mmx - module.catx - 1 * module.scale) / (module.width - 2 * module.scale)
+                              //      let ym = Math.abs(
+                              //           1 -
+                              //                (mmy -
+                              //                     (module.caty +
+                              //                          module.pos * module.height +
+                              //                          index * module.height +
+                              //                          details[module.name] * module.height -
+                              //                          module.getNameOrder().length * module.height +
+                              //                          module.height * 3 +
+                              //                          1 * module.scale +
+                              //                          (Object.keys(expand).includes(module.name + name) ? expand[module.name + name] * module.height : 0))) /
+                              //                     (module.height * 5 - 4 * module.scale)
+                              //      )
+
+                              //      xm = xm = Math.max(0.005, Math.min(xm, 1))
+                              //      ym = ym = Math.max(0.005, Math.min(ym, 1))
+
+                              //      ChatLib.chat(xm)
+                              //      const h = rgbToHsv(module.color[name].r, module.color[name].g, module.color[name].b).h
+
+                              //      module.color[name].r = hsvToRgb(h * 360, xm, ym).r
+                              //      module.color[name].g = hsvToRgb(h * 360, xm, ym).g
+                              //      module.color[name].b = hsvToRgb(h * 360, xm, ym).b
+                              // }) Will Fix
+                         }
+                         if (
+                              hovering(
+                                   mx,
+                                   my,
+                                   module.catx + 2 * module.scale,
+                                   module.caty +
+                                        module.pos * module.height +
+                                        index * module.height +
+                                        details[module.name] * module.height -
+                                        module.getNameOrder().length * module.height +
+                                        module.height * 8 +
+                                        1 * module.scale +
+                                        (Object.keys(expand).includes(module.name + name) ? expand[module.name + name] * module.height : 0),
+                                   module.width - 4 * module.scale,
+                                   module.height - 4 * module.scale
+                              ) &&
+                              button == 0 &&
+                              down
+                         ) {
+                              const xm = (mx - module.catx - 1 * module.scale) / (module.width - 2 * module.scale)
+
+                              const s = rgbToHsv(module.color[name].r, module.color[name].g, module.color[name].b).s
+                              const v = rgbToHsv(module.color[name].r, module.color[name].g, module.color[name].b).v
+                              ChatLib.chat(s)
+                              module.color[name].r = hsvToRgb(xm * 360, s, v).r
+                              module.color[name].g = hsvToRgb(xm * 360, s, v).g
+                              module.color[name].b = hsvToRgb(xm * 360, s, v).b
+
+                              const clik = register("clicked", (mmx, mmy, button, down) => {
+                                   if (button === 0 && !down) {
+                                        drag.unregister()
+                                        clik.unregister()
+                                   }
+                              })
+                              const drag = register("dragged", (dx, dy, mmx, mmy, button) => {
+                                   const xm = Math.max(0, Math.min((mmx - module.catx - 1 * module.scale) / (module.width - 2 * module.scale), 0.999))
+
+                                   const s = rgbToHsv(module.color[name].r, module.color[name].g, module.color[name].b).s
+                                   const v = rgbToHsv(module.color[name].r, module.color[name].g, module.color[name].b).v
+                                   module.color[name].r = hsvToRgb(xm * 360, s, v).r
+                                   module.color[name].g = hsvToRgb(xm * 360, s, v).g
+                                   module.color[name].b = hsvToRgb(xm * 360, s, v).b
+                              })
+                         }
+                         if (
+                              hovering(
+                                   mx,
+                                   my,
+                                   module.catx + 2 * module.scale,
+                                   module.caty +
+                                        module.pos * module.height +
+                                        index * module.height +
+                                        details[module.name] * module.height -
+                                        module.getNameOrder().length * module.height +
+                                        module.height * 9 +
+                                        1 * module.scale +
+                                        (Object.keys(expand).includes(module.name + name) ? expand[module.name + name] * module.height : 0),
+                                   module.width - 4 * module.scale,
+                                   module.height - 4 * module.scale
+                              ) &&
+                              button == 0 &&
+                              down &&
+                              module.color[name].alphable
+                         ) {
+                              const xm = (mx - module.catx - 1 * module.scale) / (module.width - 2 * module.scale)
+
+                              module.color[name].alpha = xm * 255
+
+                              const clik = register("clicked", (mmx, mmy, button, down) => {
+                                   if (button === 0 && !down) {
+                                        drag.unregister()
+                                        clik.unregister()
+                                   }
+                              })
+                              const drag = register("dragged", (dx, dy, mmx, mmy, button) => {
+                                   const xm = Math.max(0, Math.min((mmx - module.catx - 1 * module.scale) / (module.width - 2 * module.scale), 1))
+
+                                   module.color[name].alpha = xm * 255
+                              })
+                         }
+                    }
+
                     if (
-                         hovering(mx, my, module.getModulePos()[0], module.caty + module.pos * module.height + index * module.height + details[module.name] * module.height - module.getNameOrder().length * module.height + module.height * 2, module.getModulePos()[2], module.getModulePos()[3]) &&
+                         hovering(
+                              mx,
+                              my,
+                              module.getModulePos()[0],
+                              module.caty +
+                                   module.pos * module.height +
+                                   index * module.height +
+                                   details[module.name] * module.height -
+                                   module.getNameOrder().length * module.height +
+                                   module.height * 2 +
+                                   (Object.keys(expand).includes(module.name + name) ? expand[module.name + name] * module.height : 0),
+                              module.getModulePos()[2],
+                              module.getModulePos()[3]
+                         ) &&
                          button == 0 &&
                          down
                     ) {
@@ -709,7 +1113,14 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                                         mx,
                                         my,
                                         module.catx + module.width - Renderer.getStringWidth(module.sliders[name].value.toFixed(module.sliders[name].max >= 100 ? 0 : module.sliders[name].max >= 10 ? 1 : module.sliders[name].max >= 1 ? 2 : 0)) * settingsscale * module.scale,
-                                        module.caty + module.pos * module.height + index * module.height + details[module.name] * module.height - module.getNameOrder().length * module.height + module.height * 2 - 1.5 * settingsscale * module.scale,
+                                        module.caty +
+                                             module.pos * module.height +
+                                             index * module.height +
+                                             details[module.name] * module.height -
+                                             module.getNameOrder().length * module.height +
+                                             module.height * 2 -
+                                             1.5 * settingsscale * module.scale +
+                                             (Object.keys(expand).includes(module.name + name) ? expand[module.name + name] * module.height : 0),
                                         Renderer.getStringWidth(module.sliders[name].value.toFixed(module.sliders[name].max >= 100 ? 0 : module.sliders[name].max >= 10 ? 1 : module.sliders[name].max >= 1 ? 2 : 0)),
                                         7.5 * settingsscale * module.scale
                                    )
@@ -779,7 +1190,14 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                                         mx,
                                         my,
                                         module.catx + module.width - Renderer.getStringWidth(module.textBox[name]) * settingsscale * module.scale,
-                                        module.caty + module.pos * module.height + index * module.height + details[module.name] * module.height - module.getNameOrder().length * module.height + module.height * 2 - 1.5 * settingsscale * module.scale,
+                                        module.caty +
+                                             module.pos * module.height +
+                                             index * module.height +
+                                             details[module.name] * module.height -
+                                             module.getNameOrder().length * module.height +
+                                             module.height * 2 -
+                                             1.5 * settingsscale * module.scale +
+                                             (Object.keys(expand).includes(module.name + name) ? expand[module.name + name] * module.height : 0),
                                         Renderer.getStringWidth(module.textBox[name]),
                                         7.5 * settingsscale * module.scale
                                    )
@@ -816,6 +1234,48 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                          }
                          if (module.getTypeByName(name) == "button") {
                               module.buttons[name]()
+                         }
+                         if (module.getTypeByName(name) == "color") {
+                              if (
+                                   !hovering(
+                                        mx,
+                                        my,
+                                        module.catx + module.width - 32 * module.scale,
+                                        module.caty +
+                                             module.pos * module.height +
+                                             index * module.height +
+                                             details[module.name] * module.height -
+                                             module.getNameOrder().length * module.height +
+                                             module.height * 2 +
+                                             2 * module.scale +
+                                             (Object.keys(expand).includes(module.name + name) ? expand[module.name + name] * module.height : 0),
+                                        10 * module.scale * 3,
+                                        10 * module.scale
+                                   )
+                              )
+                                   return
+
+                              // if (expanded.includes(module.name + name)) {
+                              // expanded = expanded.filter(namee => namee !== module.name + name)
+
+                              const amount = module.color[name].alphable === true ? 7 : 6
+
+                              Module.getCategoryContent(module.category).forEach((mdl, i) => {
+                                   if (i <= idx) return
+                                   mdl.pos += expanded.includes(module.name + name) ? -amount : amount
+                              })
+
+                              module.paramorder.forEach((param, i) => {
+                                   if (i - 1 < index) return
+                                   if (Object.keys(expand).includes(module.name + param)) expand[module.name + param] += expanded.includes(module.name + name) ? -amount : amount
+                                   else expand[module.name + param] = amount
+                                   Object.keys(expand).includes(module.name + name)
+                              })
+                              if (expanded.includes(module.name + name)) {
+                                   expanded = expanded.filter(yeah => yeah !== module.name + name)
+                                   return
+                              }
+                              expanded.push(module.name + name)
                          }
                     }
                })
@@ -878,4 +1338,196 @@ kb.registerKeyPress(() => {
      gui.open()
 })
 
-export const clickGui = new Module("Misc", "Click Gui").addSwitch("Simplified Name", false)
+function preDraw() {
+     GlStateManager.func_179103_j(GL11.GL_SMOOTH)
+     GlStateManager.func_179147_l()
+     GlStateManager.func_179120_a(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA)
+     GlStateManager.func_179090_x()
+     GlStateManager.func_179129_p()
+     GlStateManager.func_179140_f()
+     GlStateManager.func_179118_c()
+}
+
+function postDraw() {
+     GlStateManager.func_179098_w()
+     GlStateManager.func_179084_k()
+     GlStateManager.func_179089_o()
+     GlStateManager.func_179141_d()
+     GlStateManager.func_179117_G()
+     GlStateManager.func_179103_j(GL11.GL_FLAT)
+} // thanks noam
+
+export const clickGui = new Module("Misc", "Click Gui")
+     .addSwitch("Simplified Name", false)
+     .addSlider("Click Gui Height", 20, 18.5, 50)
+     .addButton("Reset Gui", () => {
+          Module.resetGui()
+     })
+
+function rgbToHsv(r, g, b) {
+     r /= 255
+     g /= 255
+     b /= 255
+
+     const max = Math.max(r, g, b),
+          min = Math.min(r, g, b)
+     const delta = max - min
+
+     let h = 0
+     if (delta !== 0) {
+          if (max === r) {
+               h = ((g - b) / delta) % 6
+          } else if (max === g) {
+               h = (b - r) / delta + 2
+          } else {
+               h = (r - g) / delta + 4
+          }
+          h /= 6
+          if (h < 0) h += 1
+     }
+
+     const s = max === 0 ? 0 : delta / max
+     const v = max
+
+     return { h, s, v } // h = 0–1, s = 0–1, v = 0–1
+}
+
+function hsvToRgb(h, s, v) {
+     let r, g, b
+
+     s = Math.max(0, Math.min(1, s))
+     v = Math.max(0, Math.min(1, v))
+     h = h % 360
+     if (h < 0) h += 360
+
+     if (s === 0) {
+          r = g = b = v // gray
+     } else {
+          const hPrime = h / 60
+          const i = Math.floor(hPrime)
+          const f = hPrime - i
+          const p = v * (1 - s)
+          const q = v * (1 - s * f)
+          const t = v * (1 - s * (1 - f))
+
+          switch (i) {
+               case 0:
+                    r = v
+                    g = t
+                    b = p
+                    break
+               case 1:
+                    r = q
+                    g = v
+                    b = p
+                    break
+               case 2:
+                    r = p
+                    g = v
+                    b = t
+                    break
+               case 3:
+                    r = p
+                    g = q
+                    b = v
+                    break
+               case 4:
+                    r = t
+                    g = p
+                    b = v
+                    break
+               case 5:
+                    r = v
+                    g = p
+                    b = q
+                    break
+          }
+     }
+
+     return {
+          r: Math.round(r * 255),
+          g: Math.round(g * 255),
+          b: Math.round(b * 255)
+     }
+}
+
+register("renderOverlay", () => {
+     const colore = new color(1, 0, 0, 1)
+     const black = new color(0, 0, 0, 1)
+     const white = new color(1, 1, 1, 1)
+
+     // drawSvBox(100, 100, colore)
+     // drawHueSlider(100, 100 + 95)
+})
+
+function drawHueSlider(x, y, w, h) {
+     // const segmentHeight = 90 / 6
+     w /= 6
+     let hue1, hue2, color1, color2
+
+     for (let i = 0; i < 6; i++) {
+          hue1 = (i * 360) / 6
+          hue2 = ((i + 1) * 360) / 6
+          color1 = new color(hsvToRgb(hue1, 1, 1).r / 255, hsvToRgb(hue1, 1, 1).g / 255, hsvToRgb(hue1, 1, 1).b / 255, 1)
+          color2 = new color(hsvToRgb(hue2, 1, 1).r / 255, hsvToRgb(hue2, 1, 1).g / 255, hsvToRgb(hue2, 1, 1).b / 255, 1)
+          drawGradient(x + i * w, y, w, h, color1, color2, color1, color2)
+     }
+}
+
+let colorse = []
+
+// function drawHue() {
+//      for (let i = 0; i <= 360; i++) {
+//           // chat(i)
+
+//           // chat(i)
+//           const { r, g, b } = hsvToRgb(i, 1, 1)
+//           colorse[i] = { r, g, b }
+//           // Renderer.drawRect(Renderer.color(r, g, b, 255), 100 + i, 100, 0.5, 20)
+//      }
+// }
+
+function drawSvBox(x, y, w, h, currentHue) {
+     const width = w
+     const height = h
+     const pureHueColor = Renderer.color(currentHue.getRed(), currentHue.getGreen(), currentHue.getBlue())
+     Renderer.drawRect(pureHueColor, x, y, width, height)
+
+     const white = new color(1, 1, 1, 1)
+     const transparentWhite = new color(1, 1, 1, 0)
+     drawGradient(x, y, width, height, white, transparentWhite, white, transparentWhite)
+
+     const black = new color(0, 0, 0, 1)
+     const transparentBlack = new color(0, 0, 0, 0)
+     drawGradient(x, y, width, height, transparentBlack, transparentBlack, black, black)
+}
+
+function drawGradient(x, y, width, height, topLeft, topRight, bottomLeft, bottomRight) {
+     const tessellator = net.minecraft.client.renderer.Tessellator.func_178181_a()
+     const worldRenderer = tessellator.func_178180_c()
+     const glStateManager = net.minecraft.client.renderer.GlStateManager
+
+     glStateManager.func_179094_E()
+
+     preDraw()
+
+     worldRenderer.func_181668_a(7, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_181706_f)
+
+     worldRenderer
+          .func_181662_b(x, y + height, 0.0)
+          .func_181669_b(bottomLeft.getRed(), bottomLeft.getGreen(), bottomLeft.getBlue(), bottomLeft.getAlpha())
+          .func_181675_d()
+     worldRenderer
+          .func_181662_b(x + width, y + height, 0.0)
+          .func_181669_b(bottomRight.getRed(), bottomRight.getGreen(), bottomRight.getBlue(), bottomRight.getAlpha())
+          .func_181675_d()
+     worldRenderer
+          .func_181662_b(x + width, y, 0.0)
+          .func_181669_b(topRight.getRed(), topRight.getGreen(), topRight.getBlue(), topRight.getAlpha())
+          .func_181675_d()
+     worldRenderer.func_181662_b(x, y, 0.0).func_181669_b(topLeft.getRed(), topLeft.getGreen(), topLeft.getBlue(), topLeft.getAlpha()).func_181675_d()
+     tessellator.func_78381_a()
+
+     postDraw()
+     glStateManager.func_179121_F()
+}

@@ -30,24 +30,27 @@ register("tick", () => {
 })
 
 register("packetReceived", packet => {
-     const inventory = Player.getInventory()
      Client.scheduleTask(1, () => {
           if (Player.getContainer().getName() == "Your Equipment and Stats") {
+               // chat("ea")
                closeafter.register()
                if (!Player.getContainer().getStackInSlot(11).getName().includes("Spirit Mask") && !Player.getContainer().getStackInSlot(11).getName().includes("Bonzo's Mask")) {
                     spiritactive = false
                     bonzoactive = false
+
                     return
                }
 
                if (Player.getContainer().getStackInSlot(11).getName().includes("Bonzo's Mask")) {
                     spiritactive = false
                     bonzoactive = true
+                    // chat("e")
                     return
                }
                if (Player.getContainer().getStackInSlot(11).getName().includes("Spirit Mask")) {
                     spiritactive = true
                     bonzoactive = false
+                    // chat("e")
                }
           }
      })
@@ -72,25 +75,21 @@ register("chat", pet => {
 }).setCriteria("You summoned your ${pet}!")
 
 register("chat", () => {
-     Client.showTitle("&dBonzo's Mask used!", "", 10, 10, 10)
      bonzoinvtimer = 3 * 20
      bonzotimer = 180 * 20
 }).setCriteria("Your Bonzo's Mask saved your life!")
 
 register("chat", () => {
-     Client.showTitle("&dBonzo's Mask used!", "", 10, 10, 10)
      bonzoinvtimer = 3 * 20
      bonzotimer = 180 * 20
 }).setCriteria("Your ⚚ Bonzo's Mask saved your life!")
 
 register("chat", () => {
-     Client.showTitle("&dSpirit Mask used!", "", 10, 10, 10)
      spiritinvtimer = 3 * 20
      spirittimer = 30 * 20
 }).setCriteria("Second Wind Activated! Your Spirit Mask saved your life!")
 
 register("chat", () => {
-     Client.showTitle("&dPhoenix Pet used!", "", 10, 10, 10)
      phoenixinvtimer = 4 * 20
      phoenixtimer = 60 * 20
 }).setCriteria("Your Phoenix Pet saved you from certain death!")
