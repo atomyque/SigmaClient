@@ -42,7 +42,7 @@ export class Module {
      static all = []
      static catorder = []
 
-     constructor(category, name) {
+     constructor(category, name, description) {
           const existing = Module.all.find(mod => mod.name === name && mod.category === category)
           if (existing) {
                return existing
@@ -251,38 +251,31 @@ export class Module {
                     Renderer.drawRect(
                          defaultcolor,
                          this.catx,
-                         this.caty +
-                              this.pos * this.height +
-                              index * this.height +
-                              details[this.name] * this.height -
-                              this.getNameOrder().length * this.height +
-                              this.height * 3 +
-                              this.height -
-                              this.height / 0.8 +
-                              (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 3 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
                          this.width,
                          this.height - this.height / 0.8
                     )
-                    Renderer.drawRect(
-                         defaultcolor,
-                         this.catx + this.width - Renderer.getStringWidth(this.sliders[name].value.toFixed(this.sliders[name].max >= 100 ? 0 : this.sliders[name].max >= 10 ? 1 : this.sliders[name].max >= 1 ? 2 : 0)) * settingsscale * this.scale - 3 * settingsscale * this.scale,
-                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
-                         Renderer.getStringWidth(this.sliders[name].value.toFixed(this.sliders[name].max >= 100 ? 0 : this.sliders[name].max >= 10 ? 1 : this.sliders[name].max >= 1 ? 2 : 0)) * settingsscale * this.scale + 3 * settingsscale * this.scale,
-                         7.5 * settingsscale * this.scale
-                    )
+                    // Renderer.drawRect(
+                    //      defaultcolor,
+                    //      this.catx + this.width - Renderer.getStringWidth(this.sliders[name].value.toFixed(this.sliders[name].max >= 100 ? 0 : this.sliders[name].max >= 10 ? 1 : this.sliders[name].max >= 1 ? 2 : 0)) * settingsscale * this.scale - 3 * settingsscale * this.scale,
+                    //      this.caty +
+                    //           this.pos * this.height +
+                    //           index * this.height +
+                    //           details[this.name] * this.height -
+                    //           this.getNameOrder().length * this.height +
+                    //           this.height * 3 +
+                    //           this.height -
+                    //           this.height / 0.8 +
+                    //           (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                    //      Renderer.getStringWidth(this.sliders[name].value.toFixed(this.sliders[name].max >= 100 ? 0 : this.sliders[name].max >= 10 ? 1 : this.sliders[name].max >= 1 ? 2 : 0)) * settingsscale * this.scale + 3 * settingsscale * this.scale,
+                    //      7.5 * settingsscale * this.scale
+                    // )
 
                     Renderer.drawRect(
                          toggledcolor,
                          this.catx,
-                         this.caty +
-                              this.pos * this.height +
-                              index * this.height +
-                              details[this.name] * this.height -
-                              this.getNameOrder().length * this.height +
-                              this.height * 3 +
-                              (this.height - this.height / 0.8) +
-                              (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
-                         (this.width * (this.sliders[name].value - this.sliders[name].min)) / (this.sliders[name].max - this.sliders[name].min) + 1.25 * this.scale,
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 3 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                         (this.width * (this.sliders[name].value - this.sliders[name].min)) / (this.sliders[name].max - this.sliders[name].min),
                          this.height - this.height / 0.8
                     )
                     drawStringSemiBold(
@@ -298,7 +291,7 @@ export class Module {
                     drawStringSemiBold(
                          valuetostring,
                          this.catx + this.width - diff,
-                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2.5 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) - 2 * scale,
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2.5 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
                          scale,
                          false,
                          true
@@ -309,7 +302,7 @@ export class Module {
 
                     Renderer.drawRect(
                          defaultcolor,
-                         this.catx + this.width - Renderer.getStringWidth(this.textBox[name]) * settingsscale * this.scale - 3 * settingsscale * this.scale,
+                         this.catx + this.width - (fontb.getWidth(this.textBox[name]) / 3) * scale - 1 * settingsscale * this.scale,
                          this.caty +
                               this.pos * this.height +
                               index * this.height +
@@ -318,41 +311,27 @@ export class Module {
                               this.height * 2 +
                               4 * settingsscale * this.scale +
                               (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
-                         Renderer.getStringWidth(this.textBox[name]) * settingsscale * this.scale + 3 * settingsscale * this.scale,
-                         7.5 * settingsscale * this.scale
+                         (fontb.getWidth(this.textBox[name]) / 3) * scale + 1 * settingsscale * this.scale,
+                         9 * settingsscale * this.scale
                     )
 
-                    Renderer.retainTransforms(true)
-                    settingsscale = settingsscale * this.scale
-                    Renderer.scale(settingsscale, settingsscale)
-                    Renderer.drawString(
+                    drawStringSemiBold(
                          name,
-                         Module.getSharedCategoryCoords(this.category)[0] / settingsscale + (this.width - this.width * 0.96) / settingsscale + 1.5,
-                         this.caty / settingsscale +
-                              (this.pos * this.height) / settingsscale +
-                              (index * this.height) / settingsscale +
-                              (details[this.name] * this.height) / settingsscale -
-                              (this.getNameOrder().length * this.height) / settingsscale +
-                              (this.height * 2) / settingsscale +
-                              4 +
-                              (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) / settingsscale,
-                         false
+                         this.catx + (this.width - this.width * 0.97) * 1.3,
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2.5 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                         scale,
+                         false,
+                         true
                     )
-                    Renderer.drawString(
+
+                    drawStringSemiBold(
                          this.textBox[name],
-                         Module.getSharedCategoryCoords(this.category)[0] / settingsscale + this.width / settingsscale - Renderer.getStringWidth(this.textBox[name]) - 1.5,
-                         this.caty / settingsscale +
-                              (this.pos * this.height) / settingsscale +
-                              (index * this.height) / settingsscale +
-                              (details[this.name] * this.height) / settingsscale -
-                              (this.getNameOrder().length * this.height) / settingsscale +
-                              (this.height * 2) / settingsscale +
-                              4 +
-                              (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) / settingsscale,
-                         false
+                         this.catx + this.width - (fontsb.getWidth(this.textBox[name]) / 3) * scale,
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2.5 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                         scale,
+                         false,
+                         true
                     )
-                    settingsscale = settingsscale / this.scale
-                    Renderer.retainTransforms(false)
                }
                if (this.getTypeByName(name) == "button") {
                     drawStringSemiBold(
@@ -640,6 +619,14 @@ export class Module {
                     if (typeof currentmodule.sliders[name] == "undefined") return
                     this.sliders[name].value = currentmodule.sliders[name].value
                }
+               if (this.getTypeByName(name) == "color") {
+                    if (typeof currentmodule.color[name] == "undefined") return
+                    this.color[name] = currentmodule.color[name]
+               }
+               if (this.getTypeByName(name) == "textbox") {
+                    if (typeof currentmodule.textBox[name] == "undefined") return
+                    this.textBox[name] = currentmodule.textBox[name]
+               }
           })
           this.height = currentmodule.height
           this.width = currentmodule.width
@@ -740,6 +727,8 @@ function saveModules() {
           switches: m.switches,
           sliders: m.sliders,
           paramorder: m.paramorder,
+          textBox: m.textBox,
+          color: m.color,
           scale: m.scale,
           catx: m.catx,
           caty: m.caty,
@@ -760,28 +749,39 @@ register("command", () => {
      gui.open()
 }).setName("open")
 
-register("worldLoad", () => {
-     Module.getAll().sort((a, b) => Renderer.getStringWidth(b.name) - Renderer.getStringWidth(a.name))
+function sortmodules() {
      let lastcat = ""
-     Module.getCategories().forEach(category => {
-          Module.getCategoryContent(category).forEach((module, index) => {
-               module.pos = index
+     details = {}
+     expand = {}
+     expanded = []
 
+     Module.getCategories().forEach(category => {
+          let neu = 0
+          Module.getCategoryContent(category).forEach((module, index) => {
+               module.indetails = false
+               module.pos = index
                if (index == 0) {
-                    if (Renderer.getStringWidth(module.name) * modulescale >= Renderer.getStringWidth(category) * catscale) Module.setSharedCategoryWidth(category, (Renderer.getStringWidth(module.name) * modulescale + 2 * modulescale) * Module.getSharedCategoryCoords(category)[4])
+                    if ((fontb.getWidth(module.name) / 3) * modulescale >= (fontb.getWidth(category) / 3) * catscale) Module.setSharedCategoryWidth(category, ((fontb.getWidth(module.name) / 3) * modulescale + 5 * modulescale) * Module.getSharedCategoryCoords(category)[4])
                     else {
-                         Module.setSharedCategoryWidth(category, (Renderer.getStringWidth(category) * catscale + 2 * catscale) * Module.getSharedCategoryCoords(category)[4])
+                         Module.setSharedCategoryWidth(category, ((fontb.getWidth(category) / 3) * catscale + 2 * catscale) * Module.getSharedCategoryCoords(category)[4])
                     }
                }
+               const found = data.modules.some(mod => mod.name === module.name && mod.category === module.category)
+               if (found) neu++
           })
 
           // if (!data.modules.find(mod => mod.name === module.name && mod.category === module.category)) return
-          Module.setSharedCategoryX(category, 10 * Module.getSharedCategoryCoords(category)[4] + Module.getSharedCategoryCoords(lastcat)[0] + Module.getSharedCategoryCoords(lastcat)[2])
-          Module.setSharedCategoryY(category, 10)
-
+          if (!(neu >= Module.getCategoryContent(category).length)) {
+               Module.setSharedCategoryX(category, 10 * Module.getSharedCategoryCoords(category)[4] + Module.getSharedCategoryCoords(lastcat)[0] + Module.getSharedCategoryCoords(lastcat)[2])
+               Module.setSharedCategoryY(category, 10)
+          }
           lastcat = category
      })
+}
+register("worldLoad", () => {
+     Module.getAll().sort((a, b) => fontb.getWidth(b.name) / 3 - fontb.getWidth(a.name) / 3)
 
+     sortmodules()
      Module.all.forEach(e => {
           e.loadModules()
      })
@@ -837,11 +837,15 @@ function hovering(mx, my, x, y, width, height) {
 }
 
 gui.registerOpened(() => {
+     sortmodules()
+     descriptionhover.register()
      moduleclick.register()
      settingclick.register()
      categorymove.register()
 })
 gui.registerClosed(() => {
+     saveModules()
+     descriptionhover.unregister()
      moduleclick.unregister()
      settingclick.unregister()
      categorymove.unregister()
@@ -1029,7 +1033,6 @@ const settingclick = register("clicked", (mx, my, button, down) => {
 
                               const s = rgbToHsv(module.color[name].r, module.color[name].g, module.color[name].b).s
                               const v = rgbToHsv(module.color[name].r, module.color[name].g, module.color[name].b).v
-                              ChatLib.chat(s)
                               module.color[name].r = hsvToRgb(xm * 360, s, v).r
                               module.color[name].g = hsvToRgb(xm * 360, s, v).g
                               module.color[name].b = hsvToRgb(xm * 360, s, v).b
@@ -1185,29 +1188,34 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                               module.sliders[name].value = (mx / module.width - (module.catx + module.width / 2 - module.width / 2) / module.width) * (module.sliders[name].max - module.sliders[name].min) + module.sliders[name].min
                          }
                          if (module.getTypeByName(name) == "textbox") {
+                              const scale = module.scale * settingsscale
                               if (
                                    hovering(
                                         mx,
                                         my,
-                                        module.catx + module.width - Renderer.getStringWidth(module.textBox[name]) * settingsscale * module.scale,
+                                        module.catx + module.width - (fontsb.getWidth(module.textBox[name]) / 3) * scale - 10 * scale,
                                         module.caty +
                                              module.pos * module.height +
                                              index * module.height +
                                              details[module.name] * module.height -
                                              module.getNameOrder().length * module.height +
-                                             module.height * 2 -
-                                             1.5 * settingsscale * module.scale +
+                                             module.height * 2 +
                                              (Object.keys(expand).includes(module.name + name) ? expand[module.name + name] * module.height : 0),
-                                        Renderer.getStringWidth(module.textBox[name]),
-                                        7.5 * settingsscale * module.scale
-                                   )
+                                        (fontsb.getWidth(module.textBox[name]) / 3) * scale + 10 * scale,
+                                        10 * settingsscale * module.scale
+                                   ) &&
+                                   button == 0 &&
+                                   down == true
                               ) {
-                                   const clik = register("clicked", (mmx, mmy, mmb, mmd) => {
-                                        if (mmb === 0 && mmd) {
-                                             clik.unregister()
-                                             type.unregister()
-                                        }
-                                   })
+                                   setTimeout(() => {
+                                        const clik = register("clicked", (mmx, mmy, mmb, mmd) => {
+                                             if (mmb === 0 && mmd) {
+                                                  clik.unregister()
+                                                  type.unregister()
+                                             }
+                                        })
+                                   }, 100)
+
                                    const type = register("guiKey", (char, keycode) => {
                                         if (keycode == 28) {
                                              type.unregister()
@@ -1313,6 +1321,49 @@ const categorymove = register("clicked", (mx, my, button, down) => {
      })
 }).unregister()
 
+let hovered = {}
+let firsthovered = true
+
+const descriptionhover = register("tick", () => {
+     let hover
+     Module.getCategories().forEach(category => {
+          Module.getCategoryContent(category).forEach((module, index) => {
+               const mx = Client.getMouseX()
+               const my = Client.getMouseY()
+               if (hovering(mx, my, module.getModulePos()[0], module.getModulePos()[1], module.getModulePos()[2], module.getModulePos()[3])) {
+                    hover = true
+
+                    if (firsthovered == false && module.name == hovered) return
+                    hovered = module.name
+                    firsthovered = false
+                    let count = 0
+                    const timer = register("step", () => {
+                         count += 100
+
+                         const mx = Client.getMouseX()
+                         const my = Client.getMouseY()
+
+                         if (!hovering(mx, my, module.getModulePos()[0], module.getModulePos()[1], module.getModulePos()[2], module.getModulePos()[3])) {
+                              timer.unregister()
+                              return
+                         }
+                         if (count > 500) {
+                              // ChatLib.chat(module.name)
+                              timer.unregister()
+                         }
+                    }).setFps(10)
+                    setTimeout(() => {
+                         if (hovered !== module.name) return
+                    }, 500)
+               }
+          })
+     })
+     if (hover !== true) {
+          hovered = ""
+          firsthovered = true
+     }
+})
+
 const keyboard = Java.type("org.lwjgl.input.Keyboard")
 
 const scroll = register("scrolled", (mx, my, dirrection) => {
@@ -1360,7 +1411,7 @@ function postDraw() {
 export const clickGui = new Module("Misc", "Click Gui")
      .addSwitch("Simplified Name", false)
      .addSlider("Click Gui Height", 20, 18.5, 50)
-     .addButton("Reset Gui", () => {
+     .addButton("Refresh Gui", () => {
           Module.resetGui()
      })
 

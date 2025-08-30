@@ -7,6 +7,7 @@ export default new (class Dngs {
           this.whats = 0
           this.inClear = false
           this.inDungeon = false
+          this.inp5 = false
 
           register("chat", () => {
                this.inp3 = true
@@ -23,6 +24,9 @@ export default new (class Dngs {
           register("chat", () => {
                this.inDungeon = true
           }).setCriteria("You are not allowed to use Potion Effects while in Dungeon, therefore all active effects have been paused and stored. They will be restored when you leave Dungeon!")
+          register("chat", () => {
+               this.inp5 = true
+          }).setCriteria("[BOSS] Necron: Sometimes when you have a problem, you just need to destroy it all and start again.")
           register("chat", message => {
                const stage = message.match(/\((\d+)\/(\d+)\)/)
 
@@ -47,6 +51,7 @@ export default new (class Dngs {
                this.inBossRoom = false
                this.inClear = false
                this.inDungeon = false
+               this.inp5 = false
           })
 
           // getClass() {

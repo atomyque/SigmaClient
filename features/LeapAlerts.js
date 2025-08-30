@@ -1,5 +1,5 @@
 import RenderLibV2 from "../../RenderLibV2/index"
-import { Module } from "../gui/ClickGui"
+import { gui, Module } from "../gui/ClickGui"
 import { guiPiece } from "../gui/draggableGuis"
 import Dungeons from "./utils/Dungeons"
 import { chat } from "./utils/utils"
@@ -33,24 +33,37 @@ class leapBox {
      }
 }
 
-const LeapAlert = new guiPiece("Leap Alert", Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() / 4 + 30, 2.5).addText("text", "player leaped", 0, 0, 1, true, true)
-const LeapAmount = new guiPiece("Leap Alert", Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() / 4 + 50, 1.5).addText("text", "4/4", 0, 0, 1, true, true)
-const PositionalAlerts = new guiPiece("Positional Alerts", Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() / 2 + 30, 2.5).addText("text", "&aPlayer is at Spot", 0, 0, 1, true, true)
-
 const leapModule = new Module("Dungeons", "Leap alerts")
      .addSwitch("Send in chat", true)
      .addSwitch("Show classes", true)
      .addSwitch("Render Boxes", true)
-     .addSwitch("Hide Players On spots")
+     .addSwitch("Hide Players On spots", false)
      .addSwitch("Asume Core", false)
+     .addColor("Leap Alert Color", 183, 0, 255, 255, false)
      .addButton("Move Leap Alerts", () => {
-          guiPiece.gui.open()
           LeapAlert.edit()
+          guiPiece.gui.open()
      })
      .addButton("Move Leap Progress", () => {
-          guiPiece.gui.open()
           LeapAmount.edit()
+          guiPiece.gui.open()
      })
+
+const LeapAlert = new guiPiece("Leap Alert", Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() / 4 + 30, 2.5).addText("text", "player leaped", 0, 15, 1, true, true)
+const LeapAmount = new guiPiece("Leap Alert", Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() / 4 + 50, 1.5).addText("text", "4/4", 0, 0, 1, true, true)
+const PositionalAlerts = new guiPiece("Positional Alerts", Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() / 2 + 30, 2.5).addText("text", "&aPlayer is at Spot", 0, 0, 1, true, true)
+
+function refreshcolors() {
+     LeapAlert.text["text"].r = leapModule.color["Leap Alert Color"].r
+     LeapAlert.text["text"].g = leapModule.color["Leap Alert Color"].g
+     LeapAlert.text["text"].b = leapModule.color["Leap Alert Color"].b
+     LeapAlert.text["text"].alpha = leapModule.color["Leap Alert Color"].alpha
+}
+
+register("tick", () => {
+     if (!gui.isOpen()) return
+     refreshcolors()
+})
 
 const PositionalAlertsModule = new Module("Dungeons", "Positional Alerts")
      .addSwitch("Send in chat", true)
@@ -102,6 +115,9 @@ register("command", () => {
 }).setName("timer")
 
 let leapt = []
+export function leapplayeratyou(player) {
+     leapt.push(player)
+}
 
 let anounced = false
 
@@ -121,6 +137,7 @@ register("tick", () => {
           // chat(`At ${inLeapBox()[2]}`)
      }
 
+     ChatLib.chat(leapt.length)
      r = 1
      g = 1
      b = 1
@@ -194,7 +211,7 @@ function inLeapBox() {
                box.b = 1
                currentspot = box.name
 
-               if (box.name === "ee3" && leapModule.switches["Asume Core"]) return [true, 3, box.location]
+               if ((box.name === "ee3" && leapModule.switches["Asume Core"]) || (box.name === "p2bers" && !leapModule.switches["Asume Core"])) return [true, 3, box.location]
                return [true, box.amount, box.location]
           } else {
                box.r = 0
@@ -265,7 +282,8 @@ function getclasses() {
      playerclasses = {}
      // players.forEach(playername => {
      TabList.getNames().forEach(nm => {
-          let regex = /\[\d+\]\s+([A-Za-z0-9_]+)\s+\(([A-Za-z_]+)/
+          print(nm)
+          let regex = /\[\d+\]\s+([A-Za-z0-9_]+)(?:\s+[^\w\s])*\s+\(([A-Za-z_]+)/ //chat gpt regex
           const clean = ChatLib.removeFormatting(nm).trim()
 
           let match1 = clean.match(regex)

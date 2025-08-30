@@ -1,4 +1,4 @@
 .vscode/
 dist/
-.gui.json
-.modulesData.json
+gui.json
+modulesData.json

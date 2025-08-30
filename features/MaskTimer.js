@@ -1,6 +1,6 @@
 import { guiPiece } from "../gui/draggableGuis"
 import Dungeons from "./utils/Dungeons"
-import { Module } from "../gui/ClickGui"
+import { gui, Module } from "../gui/ClickGui"
 
 let spiritactive = false
 let bonzoactive = false
@@ -17,10 +17,43 @@ let phoenixinvtimer = 0
 let spirittext = ""
 let bonzotext = ""
 let phoenixtext = ""
-const maskTimerGui = new guiPiece("maskTimer", 10, 150, 1).addText("Spirit Text", "&dSpirit &f : &a✔", 0, 0, 1, false).addText("Bonzo Text", "&dBonzo &f : &a✔", 0, 10, 1, false).addText("Phoenix Text", "&dPhoenix &f : &a✔", 0, 20, 1, false)
-const maskTimerModule = new Module("Dungeons", "Mask Timer Hud").addSwitch("Toggle Everywhere", false).addButton("Move Display", () => {
-     guiPiece.gui.open()
-     maskTimerGui.edit()
+
+const maskTimerModule = new Module("Dungeons", "Mask Timer Hud")
+     .addSwitch("Toggle Everywhere", false)
+     .addColor("Hud Color", 100, 255, 100, 255, false)
+     .addButton("Move Display", () => {
+          guiPiece.gui.open()
+          maskTimerGui.edit()
+     })
+
+register("worldLoad", () => {
+     setTimeout(() => {
+          refreshcolors()
+     }, 1)
+})
+
+const maskTimerGui = new guiPiece("maskTimer", 10, 150, 1).addText("Spirit Text", "Spirit &f : &a✔", 0, 0, 1, false, true).addText("Bonzo Text", "Bonzo &f : &a✔", 0, 10, 1, false, true).addText("Phoenix Text", "Phoenix &f : &a✔", 0, 20, 1, false, true)
+
+function refreshcolors() {
+     maskTimerGui.text["Spirit Text"].r = maskTimerModule.color["Hud Color"].r
+     maskTimerGui.text["Spirit Text"].g = maskTimerModule.color["Hud Color"].g
+     maskTimerGui.text["Spirit Text"].b = maskTimerModule.color["Hud Color"].b
+     maskTimerGui.text["Spirit Text"].alpha = maskTimerModule.color["Hud Color"].alpha
+
+     maskTimerGui.text["Bonzo Text"].r = maskTimerModule.color["Hud Color"].r
+     maskTimerGui.text["Bonzo Text"].g = maskTimerModule.color["Hud Color"].g
+     maskTimerGui.text["Bonzo Text"].b = maskTimerModule.color["Hud Color"].b
+     maskTimerGui.text["Bonzo Text"].alpha = maskTimerModule.color["Hud Color"].alpha
+
+     maskTimerGui.text["Phoenix Text"].r = maskTimerModule.color["Hud Color"].r
+     maskTimerGui.text["Phoenix Text"].g = maskTimerModule.color["Hud Color"].g
+     maskTimerGui.text["Phoenix Text"].b = maskTimerModule.color["Hud Color"].b
+     maskTimerGui.text["Phoenix Text"].alpha = maskTimerModule.color["Hud Color"].alpha
+}
+
+register("tick", () => {
+     if (!gui.isOpen()) return
+     refreshcolors()
 })
 
 register("tick", () => {
@@ -116,9 +149,9 @@ const timer = register("packetReceived", () => {
      const fbonzo = sbonzo >= 90 ? `&c${sbonzo}s` : sbonzo >= 45 ? `&6${sbonzo}s` : sbonzo > 0.75 ? `&e${sbonzo}s` : `&a✔`
      const fphoenix = sphoenix >= 30 ? `&c${sphoenix}s` : sphoenix >= 15 ? `&6${sphoenix}s` : sphoenix > 0.75 ? `&e${sphoenix}s` : `&a✔`
 
-     spirittext = `${spiritactive ? "&d&l" : "&d"}Spirit &f: ${fspirit} &d${sspiritinv >= 0 ? "(" + sspiritinv + "s)" : ""}`
-     bonzotext = `${bonzoactive ? "&d&l" : "&d"}Bonzo &f: ${fbonzo} &d${sbonzoinv >= 0 ? "(" + sbonzoinv + "s)" : ""}`
-     phoenixtext = `${phoenixactive ? "&d&l" : "&d"}Phoenix &f: ${fphoenix} &d${sphoenixinv >= 0 ? "(" + sphoenixinv + "s)" : ""}`
+     spirittext = `${spiritactive ? "&l" : ""}Spirit &f: ${fspirit} &d${sspiritinv >= 0 ? "(" + sspiritinv + "s)" : ""}`
+     bonzotext = `${bonzoactive ? "&l" : ""}Bonzo &f: ${fbonzo} &d${sbonzoinv >= 0 ? "(" + sbonzoinv + "s)" : ""}`
+     phoenixtext = `${phoenixactive ? "&l" : ""}Phoenix &f: ${fphoenix} &d${sphoenixinv >= 0 ? "(" + sphoenixinv + "s)" : ""}`
 
      maskTimerGui.text["Spirit Text"].text = spirittext
      maskTimerGui.text["Bonzo Text"].text = bonzotext

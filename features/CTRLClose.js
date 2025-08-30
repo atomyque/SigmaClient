@@ -2,7 +2,7 @@ import { clickGui, Module } from "../gui/ClickGui"
 import { chat } from "./utils/utils"
 
 const CTRLClose = new Module("Misc", "Control Close").addSwitch("Equipment", true).addSwitch("Wardrobe", true)
-const WardrobeKeybins = new Module("Misc", "Wardrobe Keybinds")
+const WardrobeKeybins = new Module("Misc", "Wardrobe Keybinds").addSwitch("Always Close Menu")
 
 const keyboard = Java.type("org.lwjgl.input.Keyboard")
 register("packetReceived", packet => {
@@ -42,8 +42,8 @@ const wdkeybinds = register("packetReceived", packet => {
                     let container = Player.getContainer()
                     const slot = keycode - 1
                     container.click(35 + slot, false)
-                    if (keyboard.isKeyDown(keyboard.KEY_LCONTROL)) {
-                         if (!CTRLClose.toggled || !CTRLClose.switches["Wardrobe"]) return
+                    if (keyboard.isKeyDown(keyboard.KEY_LCONTROL) || WardrobeKeybins.switches["Always Close Menu"]) {
+                         if (!WardrobeKeybins.switches["Always Close Menu"] && (!CTRLClose.toggled || !CTRLClose.switches["Wardrobe"])) return
                          if (packet.func_179840_c().func_150254_d() == "§rWardrobe (1/2)§r") {
                               Client.scheduleTask(1, () => {
                                    Player.getPlayer().func_71053_j()

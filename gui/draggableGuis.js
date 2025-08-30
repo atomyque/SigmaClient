@@ -1,5 +1,4 @@
 import PogObject from "../../PogData"
-import { chat } from "../features/utils/utils"
 
 const keyboard = Java.type("org.lwjgl.input.Keyboard")
 
@@ -31,8 +30,8 @@ export class guiPiece {
           guiPiece.all.push(this)
      }
 
-     addText(name, text, xoffset, yoffset, scale, centered, shadow = false) {
-          this.text[name] = { text, xoffset, yoffset, scale, centered, shadow }
+     addText(name, text, xoffset, yoffset, scale, centered, shadow = false, r = 255, g = 255, b = 255, alpha = 255) {
+          this.text[name] = { text, xoffset, yoffset, scale, centered, shadow, r, g, b, alpha }
           return this
      }
      addRect(name, xoffset, yoffset, width, height, color) {
@@ -94,10 +93,10 @@ export class guiPiece {
                const stringWidth = Renderer.getStringWidth(this.text[name].text) * this.text[name].scale
                const centered = this.text[name].centered
                // this.x / scl + this.text[name].xoffset - (this.text[name].centered == true ? Renderer.getStringWidth(this.text[name].text) / 2 : 0), this.y / scl + this.text[name].yoffset - 4.5, false)
-               if (this.x + x * scale * this.scale - (centered == true ? stringWidth / 2 : 0) * this.scale < this.smallestx) this.smallestx = this.x + x * scale * this.scale - (centered == true ? stringWidth / 2 : 0) * this.scale - 5 * this.scale
-               if (this.x + x * scale * this.scale + (centered == true ? stringWidth / 2 : stringWidth / 2) * this.scale * 2 > this.biggesttextx) this.biggesttextx = this.x + x * scale * this.scale + (centered == true ? stringWidth / 2 : stringWidth / 2) * this.scale * 2 + 5 * this.scale
-               if (this.y + y * scale * this.scale - 4.5 * this.scale * scale < this.smallesty) this.smallesty = this.y + y * scale * this.scale - 4.5 * scale * this.scale
-               if (this.y + y * scale * this.scale + 4.5 * this.scale * scale > this.biggesttexty) this.biggesttexty = this.y + y * scale * this.scale + 4.5 * scale * this.scale
+               if (this.x + x * scale * this.scale - (centered == true ? stringWidth / 2 : 0) * this.scale < this.smallestx) this.smallestx = this.x + x * scale * this.scale - (centered == true ? stringWidth / 2 : 0) * this.scale - 2.5 * this.scale
+               if (this.x + x * scale * this.scale + (centered == true ? stringWidth / 2 : stringWidth / 2) * this.scale * 2 > this.biggesttextx) this.biggesttextx = this.x + x * scale * this.scale - (centered == true ? stringWidth / 2 : 0) * this.scale + 2.5 * this.scale + stringWidth * this.scale
+               if (this.y + y * scale * this.scale - 4.5 * this.scale * scale < this.smallesty) this.smallesty = this.y + y * scale * this.scale - 6 * scale * this.scale
+               if (this.y + y * scale * this.scale + 4.5 * this.scale * scale > this.biggesttexty) this.biggesttexty = this.y + y * scale * this.scale + 6 * scale * this.scale
           })
           Object.keys(this.rect).forEach(name => {
                const x = this.rect[name].xoffset
@@ -158,7 +157,7 @@ export class guiPiece {
                //    ChatLib.chat(scl)
                const scl = this.scale * this.text[name].scale
                Renderer.scale(scl, scl)
-
+               Renderer.colorize(this.text[name].r, this.text[name].g, this.text[name].b, this.text[name].alpha)
                Renderer.drawString(this.text[name].text, this.x / scl + this.text[name].xoffset - (this.text[name].centered == true ? Renderer.getStringWidth(this.text[name].text) / 2 : 0), this.y / scl + this.text[name].yoffset - 4.5, this.text[name].shadow)
                Renderer.retainTransforms(false)
           })

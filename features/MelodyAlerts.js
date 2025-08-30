@@ -1,18 +1,35 @@
-import { Module } from "../gui/ClickGui"
+import { gui, Module } from "../gui/ClickGui"
 import { guiPiece } from "../gui/draggableGuis"
 import Dungeons from "./utils/Dungeons"
-import { colors } from "./utils/utils"
 
 // .addSwitch("Play sound", true) will do if I remeber
 
-const melodyAlerts = new Module("Dungeons", "Melody Alerts").addSlider("Color", 10, 0, colors.length - 1).addButton("Move Hud", () => {
+const melodyAlerts = new Module("Dungeons", "Melody Alerts").addColor("Hud Color", 0, 0, 0, 255, false).addButton("Move Hud", () => {
      melodyHud.edit()
      guiPiece.gui.open()
 })
-const melodyHud = new guiPiece("Melody hud", Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() - 100, 1).addText("text", `${colors[melodyAlerts.sliders["Color"].value.toFixed(0)]}Player has Melody`, 0, 0, 2, true, true)
+const melodyHud = new guiPiece("Melody hud", Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() - 100, 1).addText("text", `Player has Melody`, 0, 0, 2, true, true)
+
+function refreshcolors() {
+     melodyHud.text["text"].r = melodyAlerts.color["Hud Color"].r
+     melodyHud.text["text"].g = melodyAlerts.color["Hud Color"].g
+     melodyHud.text["text"].b = melodyAlerts.color["Hud Color"].b
+     melodyHud.text["text"].alpha = melodyAlerts.color["Hud Color"].alpha
+}
 
 // register("chat", () => ).setCriteria("[BOSS] Goldor: Who dares trespass into my domain?")
 register("chat", () => melodyHud.dontdraw()).setCriteria("[BOSS] Goldor: There is no stopping me down there!")
+register("tick", () => {
+     if (!gui.isOpen) return
+     refreshcolors()
+})
+
+register("worldLoad", () => {
+     setTimeout(() => {
+          refreshcolors()
+     }, 1)
+})
+
 //prettier-ignore
 register("chat", (message) => {
      if (!Dungeons.inp3) return
@@ -33,7 +50,6 @@ register("chat", (player, message) => {
           return
      }
 
-     const color = colors[melodyAlerts.sliders["Color"].value.toFixed(0)]
      const username = player.replace(/\[.*?\]\s*/, "").trim()
      if (message.includes("(")) return
      const stage = message.match(/(\d+)\/4/)
@@ -42,10 +58,10 @@ register("chat", (player, message) => {
           if (stage > 4) return
           //   World.playSound("random.orb", 1, 2)
           melodyHud.draw()
-          melodyHud.text["text"].text = color + username + " has " + stage[1] + "/4 melody"
+          melodyHud.text["text"].text = username + " has " + stage[1] + "/4 melody"
 
           setTimeout(() => {
-               if (melodyHud.text["text"].text != color + username + " has " + stage[1] + "/4 melody") return
+               if (melodyHud.text["text"].text != username + " has " + stage[1] + "/4 melody") return
                melodyHud.dontdraw()
           }, 5000)
           return
@@ -60,17 +76,16 @@ register("chat", (player, message) => {
           return
      }
 
-     const color = colors[melodyAlerts.sliders["Color"].value.toFixed(0)]
      const username = player.replace(/\[.*?\]\s*/, "").trim()
      const stage = message.match(/(\d+)%/)
      if (stage) {
           if (stage[1] > 100) return
           //   World.playSound("random.orb", 1, 2)
           melodyHud.draw()
-          melodyHud.text["text"].text = color + username + " has " + (stage[1] / 25).toFixed(0) + "/4 melody"
+          melodyHud.text["text"].text = username + " has " + (stage[1] / 25).toFixed(0) + "/4 melody"
 
           setTimeout(() => {
-               if (melodyHud.text["text"].text != color + username + " has " + (stage[1] / 25).toFixed(0) + "/4 melody") return
+               if (melodyHud.text["text"].text != username + " has " + (stage[1] / 25).toFixed(0) + "/4 melody") return
                melodyHud.dontdraw()
           }, 5000)
           return

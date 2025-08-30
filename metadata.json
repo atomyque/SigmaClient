@@ -3,5 +3,5 @@
      "creator": "atOwO",
      "entry": "index.js",
      "version": "0.1",
-     "requires": ["PogData", "RenderLibV2"]
+     "requires": ["PogData", "RenderLibV2", "FontLib"]
 }
