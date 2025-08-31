@@ -17,7 +17,7 @@ register("command", (...args) => {
 
                          return
                     case "endp3":
-                         ChatLib.command("ct sim [BOSS] Goldor: You have done it, you destroyed the factory…", true)
+                         ChatLib.command("ct sim The Core entrance is opening!", true)
                          chat("P3 Ended.")
                          return
                     case "startboss":

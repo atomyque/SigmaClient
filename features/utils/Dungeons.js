@@ -16,7 +16,7 @@ export default new (class Dngs {
           register("chat", () => {
                this.inp3 = false
                this.whats = 0
-          }).setCriteria("[BOSS] Goldor: You have done it, you destroyed the factory…")
+          }).setCriteria("The Core entrance is opening!")
           register("chat", () => {
                this.inBossRoom = true
                this.inClear = false
@@ -26,6 +26,7 @@ export default new (class Dngs {
           }).setCriteria("You are not allowed to use Potion Effects while in Dungeon, therefore all active effects have been paused and stored. They will be restored when you leave Dungeon!")
           register("chat", () => {
                this.inp5 = true
+               this.inp3 = false
           }).setCriteria("[BOSS] Necron: Sometimes when you have a problem, you just need to destroy it all and start again.")
           register("chat", message => {
                const stage = message.match(/\((\d+)\/(\d+)\)/)

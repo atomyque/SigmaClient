@@ -71,12 +71,12 @@ export class guiPiece {
                return
           }
 
-          //   if (hovering(mx, my, this.floorx, this.floory, this.maxx - this.floorx, this.maxy - this.floory)) {
-          if (dirrection > 0) {
-               this.scale *= 1.15
+          if (this.hovering(mx, my, this.smallestx, this.smallesty, this.biggesttextx - this.smallestx, this.biggesttexty - this.smallesty)) {
+               if (dirrection > 0) {
+                    this.scale *= 1.15
+               }
+               if (dirrection < 0) this.scale /= 1.15
           }
-          if (dirrection < 0) this.scale /= 1.15
-          //   }
      })
 
      boundingBox() {
@@ -117,7 +117,7 @@ export class guiPiece {
           this.editing = true
 
           //   this.boundingBox()
-
+          guiPiece.gui.open()
           this.render.register()
           this.click.register()
           this.scroll.register()

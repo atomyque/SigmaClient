@@ -50,7 +50,7 @@ const leapModule = new Module("Dungeons", "Leap alerts")
      })
 
 const LeapAlert = new guiPiece("Leap Alert", Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() / 4 + 30, 2.5).addText("text", "player leaped", 0, 15, 1, true, true)
-const LeapAmount = new guiPiece("Leap Alert", Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() / 4 + 50, 1.5).addText("text", "4/4", 0, 0, 1, true, true)
+const LeapAmount = new guiPiece("Leap Alert", Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() / 4 + 50, 1.5).addText("text", "4/4", 0, 0, 1, true, true, 255, 75, 75, 255)
 const PositionalAlerts = new guiPiece("Positional Alerts", Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() / 2 + 30, 2.5).addText("text", "&aPlayer is at Spot", 0, 0, 1, true, true)
 
 function refreshcolors() {
@@ -161,7 +161,7 @@ register("packetReceived", packet => {
      const [pX, pY, pZ] = [Math.floor(packet.func_149449_d() / 32), Math.floor(packet.func_149448_e() / 32), Math.floor(packet.func_149446_f() / 32)]
      const playername = new Entity(entity).getName()
 
-     if (distance2d(Player.getX(), Player.getZ(), pX, pZ) <= 2 && pY - 2 < Player.getY() && pY + 2 > Player.getY()) {
+     if (distance2d(Player.getX(), Player.getZ(), pX, pZ) <= 2 && Math.abs(pY - Player.getY()) <= 2) {
           if (leapModule.switches["Send in chat"]) chat(`&5${leapModule.switches["Show classes"] == true ? (typeof playerclasses[playername] == "undefined" ? "Unknown Player" : playerclasses[playername]) : playername} has leapt to you.`)
           if (inLeapBox() && !leapt.includes(playername)) {
                leapt.push(playername)

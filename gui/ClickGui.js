@@ -1408,9 +1408,17 @@ function postDraw() {
      GlStateManager.func_179103_j(GL11.GL_FLAT)
 } // thanks noam
 
+import { guiPiece } from "./draggableGuis"
+
 export const clickGui = new Module("Misc", "Click Gui")
      .addSwitch("Simplified Name", false)
      .addSlider("Click Gui Height", 20, 18.5, 50)
+     .addButton("Move all Huds", () => {
+          guiPiece.gui.open()
+          guiPiece.all.forEach(peice => {
+               peice.edit()
+          })
+     })
      .addButton("Refresh Gui", () => {
           Module.resetGui()
      })

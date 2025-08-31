@@ -19,6 +19,11 @@ register("packetReceived", (packet, event) => {
      cancel(event)
 }).setFilteredClass(net.minecraft.network.play.server.S45PacketTitle)
 
+register("chat", () => {
+     Dungeons.inp3 = false
+     termcounter.dontdraw()
+}).setCriteria("The Core entrance is opening!")
+
 let first = false
 let action = ""
 
