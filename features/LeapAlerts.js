@@ -137,7 +137,6 @@ register("tick", () => {
           // chat(`At ${inLeapBox()[2]}`)
      }
 
-     ChatLib.chat(leapt.length)
      r = 1
      g = 1
      b = 1
