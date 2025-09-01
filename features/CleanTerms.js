@@ -3,7 +3,7 @@ import { guiPiece } from "../gui/draggableGuis"
 import { gui, Module } from "../gui/ClickGui"
 import { colors } from "./utils/utils"
 
-const cleanTerm = new Module("Dungeons", "Clean Terms")
+const cleanTerm = new Module("Dungeons", "Clean Terms", "Makes the terminal phase look cleaner with less information on your screen")
      .addSwitch("Disable Titles", false)
      .addColor("Main Color", 0, 245, 0, 255, true)
      .addColor("Subtitle Color", 0, 170, 0, 255, true)

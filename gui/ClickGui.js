@@ -34,6 +34,7 @@ let sliding = false
 let details = {}
 let expand = {}
 let expanded = []
+let hoveredmodule = ""
 let incrementamount = 0.5
 let defaultscale = 0.65
 let defaultslidelenght = 150
@@ -48,6 +49,7 @@ export class Module {
                return existing
           }
 
+          this.description = description
           this.category = category
           this.scale = defaultscale
           this.catx = undefined
@@ -803,6 +805,25 @@ gui.registerDraw(() => {
           Module.getCategoryContent(category).forEach(module => {
                if (details[module.name] !== 0) module.drawSettings(module.height)
                module.drawModule(module.height)
+               if (hoveredmodule == module.name + category) {
+                    Renderer.translate(0, 0, 1)
+                    if (module.description?.length > 40) {
+                         const splitindex = module.description.lastIndexOf(" ", 40)
+                         const first = module.description.slice(0, splitindex)
+                         const second = module.description.slice(splitindex + 1)
+
+                         Renderer.drawRect(defaultcolor, module.catx + module.width + 3 * module.scale, module.caty + module.pos * module.height + module.height, (fontsb.getWidth(first) / 3) * module.scale + 3, module.height)
+                         Renderer.translate(0, 0, 2)
+                         drawStringSemiBold(first, module.catx + module.width + 6 * module.scale, module.caty + module.pos * module.height + module.height * 1 + 1 * module.scale, module.scale, false, false)
+                         Renderer.translate(0, 0, 2)
+                         drawStringSemiBold(second, module.catx + module.width + 6 * module.scale, module.caty + module.pos * module.height + module.height * 1.5 + 1 * module.scale, module.scale, false, false)
+                    } else {
+                         const text = module.description == undefined ? "No description set." : module.description
+                         Renderer.drawRect(defaultcolor, module.catx + module.width + 3 * module.scale, module.caty + module.pos * module.height + module.height, (fontsb.getWidth(text) / 3) * module.scale + 3, module.height)
+                         Renderer.translate(0, 0, 2)
+                         drawStringSemiBold(text, module.catx + module.width + 6 * module.scale, module.caty + module.pos * module.height + module.height * 1.5, module.scale, false, true)
+                    }
+               }
           })
      })
 })
@@ -1331,7 +1352,7 @@ const descriptionhover = register("tick", () => {
                const mx = Client.getMouseX()
                const my = Client.getMouseY()
                if (hovering(mx, my, module.getModulePos()[0], module.getModulePos()[1], module.getModulePos()[2], module.getModulePos()[3])) {
-                    hover = true
+                    hover = module.name + category
 
                     if (firsthovered == false && module.name == hovered) return
                     hovered = module.name
@@ -1348,18 +1369,16 @@ const descriptionhover = register("tick", () => {
                               return
                          }
                          if (count > 500) {
-                              // ChatLib.chat(module.name)
+                              hoveredmodule = module.name + category
                               timer.unregister()
                          }
                     }).setFps(10)
-                    setTimeout(() => {
-                         if (hovered !== module.name) return
-                    }, 500)
                }
           })
      })
-     if (hover !== true) {
+     if (hover !== hoveredmodule) {
           hovered = ""
+          hoveredmodule = ""
           firsthovered = true
      }
 })

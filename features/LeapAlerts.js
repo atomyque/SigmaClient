@@ -33,7 +33,7 @@ class leapBox {
      }
 }
 
-const leapModule = new Module("Dungeons", "Leap alerts")
+const leapModule = new Module("Dungeons", "Leap alerts", "Alerts you when a player has leapt to you and indicates the progress.")
      .addSwitch("Send in chat", true)
      .addSwitch("Show classes", true)
      .addSwitch("Render Boxes", true)
@@ -65,8 +65,8 @@ register("tick", () => {
      refreshcolors()
 })
 
-const PositionalAlertsModule = new Module("Dungeons", "Positional Alerts")
-     .addSwitch("Send in chat", true)
+const PositionalAlertsModule = new Module("Dungeons", "Positional Alerts", "Alerts you when a player is at an early enter spot.")
+     .addSwitch("Send in party chat", true)
      .addSwitch("Show on screen", true)
      .addButton("Move Positional Alerts", () => {
           guiPiece.gui.open()

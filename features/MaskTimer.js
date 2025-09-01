@@ -18,7 +18,7 @@ let spirittext = ""
 let bonzotext = ""
 let phoenixtext = ""
 
-const maskTimerModule = new Module("Dungeons", "Mask Timer Hud")
+const maskTimerModule = new Module("Dungeons", "Mask Timer Hud", "Shows timers related to masks.")
      .addSwitch("Toggle Everywhere", false)
      .addColor("Hud Color", 100, 255, 100, 255, false)
      .addButton("Move Display", () => {

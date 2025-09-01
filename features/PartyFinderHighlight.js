@@ -7,9 +7,9 @@ let ok = {}
 let ok2 = {}
 let pbparties = []
 
-const partyFinderHighlight = new Module("Dungeons", "Party Finder Highlight").addSlider("PB required", 6, 3, 9)
+const partyFinderHighlight = new Module("Dungeons", "Party Finder Highlight", "Gives you visual clues in the party finder.").addSwitch("Show Party Size", true)
 const rdrslot = register("renderSlot", slot => {
-     // if (!partyFinderHighlight.toggled) return
+     if (!partyFinderHighlight.toggled) return
      if (slot.getInventory().getName() !== "Party Finder") {
           return
      }
@@ -18,7 +18,7 @@ const rdrslot = register("renderSlot", slot => {
           Renderer.drawRect(Renderer.color(0, 255, 0, 100), slot.getDisplayX(), slot.getDisplayY(), 16, 16)
      }
 
-     if (ok[slot.getIndex()] >= 1) {
+     if (ok[slot.getIndex()] >= 1 && partyFinderHighlight.switches["Show Party Size"]) {
           Renderer.translate(0, 0, 255)
           Renderer.drawString(ok[slot.getIndex()], slot.getDisplayX() + 11, slot.getDisplayY() + 9, true)
      }

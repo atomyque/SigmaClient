@@ -3,7 +3,7 @@ import { guiPiece } from "../gui/draggableGuis"
 
 let lasttick = Date.now()
 
-const ServerFreezeIndicatorModule = new Module("Misc", "Server Freeze Indicator").addSlider("Threshold", 500, 150, 2000).addButton("Move Display", () => {
+const ServerFreezeIndicatorModule = new Module("Misc", "Server Freeze Indicator", "Shows how long the server has been lagging for after a certain threshold.").addSlider("Threshold", 500, 150, 2000).addButton("Move Display", () => {
      guiPiece.gui.open()
      ServerFreezeIndicatorGui.edit()
 })

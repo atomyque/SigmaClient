@@ -1,7 +1,7 @@
 import { Module } from "../gui/ClickGui"
 import { drawCircleQuarter } from "./utils/render"
 
-const customScoreboard = new Module("Render", "Custom Scoreboard").addSwitch("Show background").addSwitch("Text Shadow").addTextBox("Footer", "&f&lSigma Client")
+const customScoreboard = new Module("Render", "Custom Scoreboard", "Lets you customize the sidebar.").addSwitch("Show background").addSwitch("Text Shadow").addTextBox("Footer", "&f&lSigma Client")
 
 let scoreboard = []
 let header = ""

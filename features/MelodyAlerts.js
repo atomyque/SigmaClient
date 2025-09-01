@@ -4,7 +4,7 @@ import Dungeons from "./utils/Dungeons"
 
 // .addSwitch("Play sound", true) will do if I remeber
 
-const melodyAlerts = new Module("Dungeons", "Melody Alerts").addColor("Hud Color", 0, 0, 0, 255, false).addButton("Move Hud", () => {
+const melodyAlerts = new Module("Dungeons", "Melody Alerts", "Shows an alert on your screen when a player gets the melody terminal.").addColor("Hud Color", 0, 0, 0, 255, false).addButton("Move Hud", () => {
      melodyHud.edit()
      guiPiece.gui.open()
 })
