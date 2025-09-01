@@ -14,7 +14,7 @@ register("packetReceived", () => {
 
 register("renderOverlay", () => {
      if (!ServerFreezeIndicatorModule.toggled) return
-     if (Server.getIP() == "hypixel.net")
+     if (Server.getIP().toLowerCase().includes("hypixel") || Server.getIP().toLowerCase().includes("catgirl"))
           if (Date.now() - lasttick > ServerFreezeIndicatorModule.sliders["Threshold"].value) {
                ServerFreezeIndicatorGui.draw()
                ServerFreezeIndicatorGui.text["Tick"].text = `&c${Date.now() - lasttick}ms`
