@@ -12,9 +12,13 @@ jobs:
                  uses: actions/checkout@v4.1.1
                - name: Create SigmaClient zip
                  run: |
-                      mkdir "SigmaClient"
+                      mkdir "Sigma Client"
                       shopt -s dotglob
-                      mv * "SigmaClient"/
+                      for f in *; do
+                        if [ "$f" != "Sigma Client" ]; then
+                          mv "$f" "Sigma Client"/
+                        fi
+                      done
                       zip -r "SigmaClient-${BUILD_NUMBER}.zip" "Sigma Client" \
                         -x "Sigma Client/README.md" \
                         -x "Sigma Client/upload/*" \
