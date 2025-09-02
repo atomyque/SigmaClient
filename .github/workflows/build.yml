@@ -14,12 +14,12 @@ jobs:
                  run: |
                       mkdir "SigmaClient"
                       shopt -s dotglob
-                      mv * "Sigma Client"/
-                      zip -r "SigmaClient-${BUILD_NUMBER}.zip" . \
-                       -x "README.md" \
-                       -x "upload" \
-                       -x ".git/*" \
-                       -x ".github/*"
+                      mv * "SigmaClient"/
+                      zip -r "SigmaClient-${BUILD_NUMBER}.zip" "Sigma Client" \
+                        -x "Sigma Client/README.md" \
+                        -x "Sigma Client/upload/*" \
+                        -x "Sigma Client/.git/*" \
+                        -x "Sigma Client/.github/*"
                - name: Upload SigmaClient zip
                  uses: actions/upload-artifact@v4.3.0
                  with:
