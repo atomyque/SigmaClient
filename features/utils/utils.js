@@ -4,3 +4,6 @@ export const colors = ["&4", "&c", "&6", "&e", "&2", "&a", "&b", "&3", "&1", "&9
 export function chat(text) {
      ChatLib.chat(`&8[${clickGui.switches["Simplified Name"] == true ? "&f&lΣ&r" : "&f&lSigma &r&fClient"}&8]&r ${text}`)
 }
+export function playSound(sound, volume, pitch) {
+     Player.getPlayer().func_85030_a(sound, volume, pitch)
+}

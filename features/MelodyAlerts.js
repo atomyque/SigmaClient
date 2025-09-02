@@ -1,13 +1,17 @@
 import { gui, Module } from "../gui/ClickGui"
 import { guiPiece } from "../gui/draggableGuis"
 import Dungeons from "./utils/Dungeons"
+import { playSound } from "./utils/utils"
 
 // .addSwitch("Play sound", true) will do if I remeber
 
-const melodyAlerts = new Module("Dungeons", "Melody Alerts", "Shows an alert on your screen when a player gets the melody terminal.").addColor("Hud Color", 0, 0, 0, 255, false).addButton("Move Hud", () => {
-     melodyHud.edit()
-     guiPiece.gui.open()
-})
+const melodyAlerts = new Module("Dungeons", "Melody Alerts", "Shows an alert on your screen when a player gets the melody terminal.")
+     .addSwitch("Play Sound", true)
+     .addColor("Hud Color", 0, 0, 0, 255, false)
+     .addButton("Move Hud", () => {
+          melodyHud.edit()
+          guiPiece.gui.open()
+     })
 const melodyHud = new guiPiece("Melody hud", Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() - 100, 1).addText("text", `Player has Melody`, 0, 0, 2, true, true)
 
 function refreshcolors() {
@@ -56,7 +60,7 @@ register("chat", (player, message) => {
 
      if (stage) {
           if (stage > 4) return
-          //   World.playSound("random.orb", 1, 2)
+          if (melodyAlerts.switches["Play Sound"]) playSound("random.orb", 1, 2)
           melodyHud.draw()
           melodyHud.text["text"].text = username + " has " + stage[1] + "/4 melody"
 
@@ -80,7 +84,7 @@ register("chat", (player, message) => {
      const stage = message.match(/(\d+)%/)
      if (stage) {
           if (stage[1] > 100) return
-          //   World.playSound("random.orb", 1, 2)
+          if (melodyAlerts.switches["Play Sound"]) playSound("random.orb", 1, 2)
           melodyHud.draw()
           melodyHud.text["text"].text = username + " has " + (stage[1] / 25).toFixed(0) + "/4 melody"
 

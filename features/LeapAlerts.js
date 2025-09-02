@@ -2,7 +2,7 @@ import RenderLibV2 from "../../RenderLibV2/index"
 import { gui, Module } from "../gui/ClickGui"
 import { guiPiece } from "../gui/draggableGuis"
 import Dungeons from "./utils/Dungeons"
-import { chat } from "./utils/utils"
+import { chat, playSound } from "./utils/utils"
 
 class leapBox {
      static all = []
@@ -167,13 +167,13 @@ register("packetReceived", packet => {
                leapt.push(playername)
                if (leapt.length == inLeapBox()[1]) {
                     LeapAlert.text["text"].text = `&aEveryone leapt`
-                    World.playSound("note.pling", 1, 2)
+                    playSound("note.pling", 1, 2)
                     timer = 500
                     return
                }
 
                LeapAlert.text["text"].text = `&5${leapModule.switches["Show classes"] == true ? (typeof playerclasses[playername] == "undefined" ? "Unknown Player" : playerclasses[playername]) : playername} leapt`
-               World.playSound("random.orb", 1, 2)
+               playSound("random.orb", 1, 2)
                timer = 500
                clock.register()
           }
@@ -339,7 +339,7 @@ register("packetReceived", packet => {
                otherclock.register()
                othertimer = 750
                PositionalAlerts.text["text"].text = `&a${leapModule.switches["Show classes"] == true ? (typeof playerclasses[username] == "undefined" ? "Unknown Player" : playerclasses[username]) : username} is at ${box.name}`
-               World.playSound("note.pling", 1, 2)
+               playSound("note.pling", 1, 2)
                continue
           }
 
