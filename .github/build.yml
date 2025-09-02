@@ -1,0 +1,59 @@
+name: Build and Upload SigmaClient
+on:
+     - push
+     - pull_request
+jobs:
+     build:
+          runs-on: ubuntu-latest
+          env:
+               BUILD_NUMBER: ${{ github.run_number }}
+          steps:
+               - name: Checkout source
+                 uses: actions/checkout@v4.1.1
+               - name: Create SigmaClient zip
+                 run: |
+                      zip -r "SigmaClient-${BUILD_NUMBER}.zip" . \
+                        -x "README.md" \
+                        -x "upload" \
+                        -x ".git/*" \
+                        -x ".github/*"
+               - name: Upload SigmaClient zip
+                 uses: actions/upload-artifact@v4.3.0
+                 with:
+                      name: SigmaClient-${{ github.run_number }}
+                      path: SigmaClient-${{ github.run_number }}.zip
+     send-to-discord:
+          if: github.event_name == 'push'
+          needs: build
+          runs-on: ubuntu-latest
+          env:
+               DISCORD_WEBHOOK_URL: ${{ secrets.WEBHOOK }}
+               BUILD_NUMBER: ${{ github.run_number }}
+          steps:
+               - name: Checkout source
+                 uses: actions/checkout@v4
+                 with:
+                      fetch-depth: 0
+               - name: Download built artifact
+                 uses: actions/download-artifact@v4.1.7
+                 with:
+                      name: SigmaClient-${{ github.run_number }}
+                      path: ./artifact
+               - name: Send zip to Discord
+                 run: |
+                      ZIP_FILE="./artifact/SigmaClient-${BUILD_NUMBER}.zip"
+                      COMMIT_MESSAGE=$(git log -1 --pretty=%s)
+                      COMMIT_HASH=$(git rev-parse --short HEAD)
+                      COMMIT_URL="https://github.com/${{ github.repository }}/commit/${COMMIT_HASH}"
+
+                      echo "Uploading $ZIP_FILE to Discord..."
+                      EMBED_PAYLOAD=$(jq -n \
+                        --arg title "SigmaClient build" \
+                        --arg desc "[Commit: $COMMIT_MESSAGE]($COMMIT_URL)" \
+                        '{embeds: [{title: $title, description: $desc, color: 5814783}]}')
+
+                      curl -X POST \
+                        -H "Content-Type: multipart/form-data" \
+                        -F "payload_json=${EMBED_PAYLOAD}" \
+                        -F "file=@${ZIP_FILE}" \
+                        "$DISCORD_WEBHOOK_URL"

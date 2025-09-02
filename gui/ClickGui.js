@@ -449,8 +449,69 @@ export class Module {
                                    (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) +
                                    this.height * 8 -
                                    brightness * (this.height * 5 - 4 * this.scale),
-                              4 * this.scale,
-                              4 * this.scale
+                              4 * this.scale * 2,
+                              4 * this.scale * 2
+                         )
+                         Renderer.drawRect(
+                              Renderer.BLACK,
+                              this.catx + saturation * (this.width - 4 * this.scale),
+                              this.caty +
+                                   this.pos * this.height +
+                                   index * this.height +
+                                   details[this.name] * this.height -
+                                   this.getNameOrder().length * this.height -
+                                   3 * this.scale +
+                                   (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) +
+                                   this.height * 8 -
+                                   brightness * (this.height * 5 - 4 * this.scale),
+                              1 * this.scale * 2,
+                              4 * this.scale * 2
+                         )
+                         Renderer.drawRect(
+                              Renderer.BLACK,
+                              this.catx + saturation * (this.width - 4 * this.scale),
+                              this.caty +
+                                   this.pos * this.height +
+                                   index * this.height +
+                                   details[this.name] * this.height -
+                                   this.getNameOrder().length * this.height -
+                                   3 * this.scale +
+                                   (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) +
+                                   this.height * 8 -
+                                   brightness * (this.height * 5 - 4 * this.scale),
+                              4 * this.scale * 2,
+                              1 * this.scale * 2
+                         )
+                         Renderer.drawRect(
+                              Renderer.BLACK,
+                              this.catx + saturation * (this.width - 4 * this.scale),
+                              this.caty +
+                                   this.pos * this.height +
+                                   index * this.height +
+                                   details[this.name] * this.height -
+                                   this.getNameOrder().length * this.height -
+                                   3 * this.scale +
+                                   (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) +
+                                   this.height * 8 -
+                                   brightness * (this.height * 5 - 4 * this.scale) +
+                                   6 * this.scale,
+                              4 * this.scale * 2,
+                              1 * this.scale * 2
+                         )
+                         Renderer.drawRect(
+                              Renderer.BLACK,
+                              this.catx + saturation * (this.width - 4 * this.scale) + 6 * this.scale,
+                              this.caty +
+                                   this.pos * this.height +
+                                   index * this.height +
+                                   details[this.name] * this.height -
+                                   this.getNameOrder().length * this.height -
+                                   3 * this.scale +
+                                   (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) +
+                                   this.height * 8 -
+                                   brightness * (this.height * 5 - 4 * this.scale),
+                              1 * this.scale * 2,
+                              4 * this.scale * 2
                          )
 
                          drawHueSlider(
@@ -1005,8 +1066,8 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                               //      }
                               // })
                               // const drag = register("dragged", (dx, dy, mmx, mmy, button) => {
-                              //      let xm = (mmx - module.catx - 1 * module.scale) / (module.width - 2 * module.scale)
-                              //      let ym = Math.abs(
+                              //      let xmm = (mmx - module.catx - 1 * module.scale) / (module.width - 2 * module.scale)
+                              //      let ymm = Math.abs(
                               //           1 -
                               //                (mmy -
                               //                     (module.caty +
@@ -1020,16 +1081,16 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                               //                     (module.height * 5 - 4 * module.scale)
                               //      )
 
-                              //      xm = xm = Math.max(0.005, Math.min(xm, 1))
-                              //      ym = ym = Math.max(0.005, Math.min(ym, 1))
+                              //      xmm = xmm = Math.max(0.005, Math.min(xmm, 1))
+                              //      ymm = ymm = Math.max(0.005, Math.min(ymm, 1))
 
-                              //      ChatLib.chat(xm)
-                              //      const h = rgbToHsv(module.color[name].r, module.color[name].g, module.color[name].b).h
+                              //      ChatLib.chat(xmm)
+                              //      const H = rgbToHsv(module.color[name].r, module.color[name].g, module.color[name].b).h
 
-                              //      module.color[name].r = hsvToRgb(h * 360, xm, ym).r
-                              //      module.color[name].g = hsvToRgb(h * 360, xm, ym).g
-                              //      module.color[name].b = hsvToRgb(h * 360, xm, ym).b
-                              // }) Will Fix
+                              //      module.color[name].r = hsvToRgb(H * 360, xmm, ymm).r
+                              //      module.color[name].g = hsvToRgb(H * 360, xmm, ymm).g
+                              //      module.color[name].b = hsvToRgb(H * 360, xmm, ymm).b
+                              // })
                          }
                          if (
                               hovering(
