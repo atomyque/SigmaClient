@@ -4,5 +4,5 @@ const autoPot = new Module("Dungeons", "Auto Potion", "Opens potion bag at the s
 
 register("chat", () => {
      if (!autoPot.toggled) return
-     ChatLib.command("potionbag")
+     ChatLib.command("potionbag") // fuck you if you dont have a cookie
 }).setCriteria("You are not allowed to use Potion Effects while in Dungeon, therefore all active effects have been paused and stored. They will be restored when you leave Dungeon!")
