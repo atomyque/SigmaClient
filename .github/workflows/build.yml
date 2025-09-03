@@ -19,11 +19,11 @@ jobs:
                           mv "$f" "SigmaClient"/
                         fi
                       done
-                      zip -r "SigmaClient-${BUILD_NUMBER}.zip" "Sigma Client" \
-                        -x "Sigma Client/README.md" \
-                        -x "Sigma Client/upload/*" \
-                        -x "Sigma Client/.git/*" \
-                        -x "Sigma Client/.github/*"
+                      zip -r "SigmaClient-${BUILD_NUMBER}.zip" "SigmaClient" \
+                        -x "SigmaClient/README.md" \
+                        -x "SigmaClient/upload/*" \
+                        -x "SigmaClient/.git/*" \
+                        -x "SigmaClient/.github/*"
                - name: Upload SigmaClient zip
                  uses: actions/upload-artifact@v4.3.0
                  with:
