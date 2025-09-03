@@ -1,6 +1,6 @@
 import PogObject from "../../PogData"
 const defaultcolor = Renderer.color(40, 40, 40, 255)
-const toggledcolor = Renderer.color(208, 124, 188, 255)
+let toggledcolor = Renderer.color(208, 124, 188, 255)
 const detailscolor = Renderer.color(34, 34, 34, 155)
 const expandcolor = Renderer.color(34, 34, 34, 100)
 import Font from "../../FontLib"
@@ -1248,7 +1248,6 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                                              module.sliders[name].value = parseFloat(typedtext)
                                              return
                                         }
-                                        print(char)
                                         if (/^[0-9.]$/.test(char)) {
                                              typedtext += char
                                              if (parseFloat(typedtext) >= module.sliders[name].max) {
@@ -1314,7 +1313,6 @@ const settingclick = register("clicked", (mx, my, button, down) => {
 
                                              return
                                         }
-                                        print(char)
                                         if (/^[ -~]$/.test(char)) {
                                              module.textBox[name] += char
                                         }
@@ -1493,11 +1491,14 @@ import { guiPiece } from "./draggableGuis"
 export const clickGui = new Module("Misc", "Click Gui")
      .addSwitch("Simplified Name", false)
      .addSlider("Click Gui Height", 20, 18.5, 50)
+     .addColor("Gui Color", 208, 124, 188, 255, false)
      .addButton("Move all Huds", () => {
           guiPiece.gui.open()
-          guiPiece.all.forEach(peice => {
-               peice.edit()
-          })
+          setTimeout(() => {
+               guiPiece.all.forEach(peice => {
+                    peice.edit()
+               })
+          }, 1)
      })
      .addButton("Refresh Gui", () => {
           Module.resetGui()
@@ -1599,6 +1600,9 @@ register("renderOverlay", () => {
      // drawHueSlider(100, 100 + 95)
 })
 
+register("tick", () => {
+     toggledcolor = Renderer.color(clickGui.color["Gui Color"].r, clickGui.color["Gui Color"].g, clickGui.color["Gui Color"].b, 255)
+})
 function drawHueSlider(x, y, w, h) {
      // const segmentHeight = 90 / 6
      w /= 6

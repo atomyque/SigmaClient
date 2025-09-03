@@ -20,3 +20,7 @@ register("renderOverlay", () => {
                ServerFreezeIndicatorGui.text["Tick"].text = `&c${Date.now() - lasttick}ms`
           } else ServerFreezeIndicatorGui.dontdraw()
 })
+
+register("worldLoad", () => {
+     ServerFreezeIndicatorGui.dontdraw()
+})

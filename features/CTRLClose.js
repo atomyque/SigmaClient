@@ -2,7 +2,7 @@ import { clickGui, Module } from "../gui/ClickGui"
 import { chat } from "./utils/utils"
 
 const CTRLClose = new Module("Misc", "Control Close", "Closes the selected menus when pressing the control key.").addSwitch("Equipment", true).addSwitch("Wardrobe", true)
-const WardrobeKeybins = new Module("Misc", "Wardrobe Keybinds", "Allows you to press number keys to switch armor in the wardrobe.").addSwitch("Always Close Menu")
+const WardrobeKeybins = new Module("Skyblock", "Wardrobe Keybinds", "Allows you to press number keys to switch armor in the wardrobe.").addSwitch("Always Close Menu")
 
 const keyboard = Java.type("org.lwjgl.input.Keyboard")
 register("packetReceived", packet => {

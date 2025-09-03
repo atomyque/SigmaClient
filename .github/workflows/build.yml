@@ -16,7 +16,7 @@ jobs:
                       shopt -s dotglob
                       for f in *; do
                         if [ "$f" != "Sigma Client" ]; then
-                          mv "$f" "Sigma Client"/
+                          mv "$f" "SigmaClient"/
                         fi
                       done
                       zip -r "SigmaClient-${BUILD_NUMBER}.zip" "Sigma Client" \

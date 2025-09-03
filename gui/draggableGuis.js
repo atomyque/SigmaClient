@@ -26,6 +26,7 @@ export class guiPiece {
           this.drawn = false
 
           this.rect = {}
+          this.item = {}
           this.text = {}
           guiPiece.all.push(this)
      }
@@ -36,6 +37,10 @@ export class guiPiece {
      }
      addRect(name, xoffset, yoffset, width, height, color) {
           this.rect[name] = { xoffset, yoffset, width, height, color }
+          return this
+     }
+     addItem(name, item, xoffset, yoffset, scale) {
+          this.item[name] = { item, xoffset, yoffset, scale }
           return this
      }
 
@@ -92,7 +97,6 @@ export class guiPiece {
                const scale = this.text[name].scale
                const stringWidth = Renderer.getStringWidth(this.text[name].text) * this.text[name].scale
                const centered = this.text[name].centered
-               // this.x / scl + this.text[name].xoffset - (this.text[name].centered == true ? Renderer.getStringWidth(this.text[name].text) / 2 : 0), this.y / scl + this.text[name].yoffset - 4.5, false)
                if (this.x + x * scale * this.scale - (centered == true ? stringWidth / 2 : 0) * this.scale < this.smallestx) this.smallestx = this.x + x * scale * this.scale - (centered == true ? stringWidth / 2 : 0) * this.scale - 2.5 * this.scale
                if (this.x + x * scale * this.scale + (centered == true ? stringWidth / 2 : stringWidth / 2) * this.scale * 2 > this.biggesttextx) this.biggesttextx = this.x + x * scale * this.scale - (centered == true ? stringWidth / 2 : 0) * this.scale + 2.5 * this.scale + stringWidth * this.scale
                if (this.y + y * scale * this.scale - 4.5 * this.scale * scale < this.smallesty) this.smallesty = this.y + y * scale * this.scale - 6 * scale * this.scale
@@ -103,6 +107,17 @@ export class guiPiece {
                const y = this.rect[name].yoffset
                const width = this.rect[name].width
                const height = this.rect[name].height
+
+               if (this.x + x * this.scale < this.smallestx) this.smallestx = this.x + x * this.scale - 5 * this.scale
+               if (this.x + x * this.scale + width * this.scale > this.biggesttextx) this.biggesttextx = this.x + x * this.scale + width * this.scale + 5 * this.scale
+               if (this.y + y * this.scale < this.smallesty) this.smallesty = this.y + y * this.scale - 5 * this.scale
+               if (this.y + y * this.scale + height * this.scale > this.biggesttexty) this.biggesttexty = this.y + y * this.scale + height * this.scale + 5 * this.scale
+          })
+          Object.keys(this.item).forEach(name => {
+               const x = this.item[name].xoffset
+               const y = this.item[name].yoffset
+               const width = 16 * this.item[name].scale
+               const height = 16 * this.item[name].scale
 
                if (this.x + x * this.scale < this.smallestx) this.smallestx = this.x + x * this.scale - 5 * this.scale
                if (this.x + x * this.scale + width * this.scale > this.biggesttextx) this.biggesttextx = this.x + x * this.scale + width * this.scale + 5 * this.scale
@@ -148,7 +163,7 @@ export class guiPiece {
           this.boundingBox()
           if (this.editing && guiPiece.gui.isOpen()) {
                Renderer.retainTransforms(false)
-
+               Renderer.translate(0, 0, -10)
                Renderer.drawRect(Renderer.color(0, 0, 0, 50), this.smallestx, this.smallesty, this.biggesttextx - this.smallestx, this.biggesttexty - this.smallesty)
           }
 
@@ -169,6 +184,14 @@ export class guiPiece {
                Renderer.drawRect(this.rect[name].color, this.x / scl + this.rect[name].xoffset, this.y / scl + this.rect[name].yoffset, this.rect[name].width, this.rect[name].height)
                Renderer.retainTransforms(false)
           })
+          Object.keys(this.item).forEach(name => {
+               Renderer.retainTransforms(true)
+               const scl = this.scale * this.item[name].scale
+               Renderer.scale(scl, scl)
+               new Item(this.item[name].item).draw(this.x / scl + this.item[name].xoffset, this.y / scl + this.item[name].xoffset)
+               Renderer.retainTransforms(false)
+          })
+
           Renderer.retainTransforms(false)
      }).unregister()
 
