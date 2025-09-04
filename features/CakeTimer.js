@@ -13,6 +13,11 @@ register("chat", () => {
      sigmadata.save()
 }).setCriteria("Yum! You gain ${cake} for 48 hours!")
 
+register("chat", () => {
+     sigmadata.lastcake = Date.now()
+     sigmadata.save()
+}).setCriteria("Big Yum! You refresh ${cake} for 48 hours!")
+
 register("step", () => {
      if (CakeTimerModule.toggled) CakeTimer.draw()
      else CakeTimer.dontdraw()
@@ -26,7 +31,3 @@ register("step", () => {
      if (CakeTimerModule.switches["Only Show When Ready"]) return CakeTimer.dontdraw()
      CakeTimer.text["text"].text = `&c${Math.floor(days)}d${Math.floor(days * 24 - Math.floor(days) * 24 + 1)}h`
 }).setFps(1)
-register("command", () => {
-     sigmadata.lastcake -= 2 * 60 * 1000
-     sigmadata.save()
-}).setName("nameeee")
