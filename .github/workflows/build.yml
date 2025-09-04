@@ -55,8 +55,8 @@ jobs:
 
                       echo "Uploading $ZIP_FILE to Discord..."
                       EMBED_PAYLOAD=$(jq -n \
-                        --arg title "[New Sigma Client Commit :]($COMMIT_URL)" \
-                        --arg desc "[$COMMIT_MESSAGE]" \
+                        --arg title "New Sigma Client Commit :" \
+                        --arg desc "[$COMMIT_MESSAGE]($COMMIT_URL)" \
                         --arg avatar "https://github.com/${GITHUB_ACTOR}.png" \
                         --arg author "${GITHUB_ACTOR}" \
                         '{embeds: [{author: { name: $author, icon_url: $avatar }, title: $title, description: $desc, color: 5814783}]}')
