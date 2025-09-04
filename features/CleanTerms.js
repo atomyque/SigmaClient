@@ -40,8 +40,6 @@ const phasefinished = register("renderOverlay", () => {
      Renderer.retainTransforms(false)
 }).unregister()
 
-register("command", () => {}).setName("testnigger")
-
 function refreshcolors() {
      termcounter.text["text"].r = cleanTerm.color["Main Color"].r
      termcounter.text["text"].g = cleanTerm.color["Main Color"].g

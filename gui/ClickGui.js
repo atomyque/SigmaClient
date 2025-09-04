@@ -761,9 +761,9 @@ export class Module {
           this.getCategories().forEach(category => {
                this.getCategoryContent(category).forEach((module, index) => {
                     if (index == 0) {
-                         if (Renderer.getStringWidth(module.name) * modulescale >= Renderer.getStringWidth(category) * catscale) this.setSharedCategoryWidth(category, (Renderer.getStringWidth(module.name) * modulescale + 2 * modulescale) * defaultscale)
+                         if ((fontb.getWidth(module.name) / 3) * modulescale >= (fontb.getWidth(category) / 3) * catscale) this.setSharedCategoryWidth(category, ((fontb.getWidth(module.name) / 3) * modulescale + 5 * modulescale) * this.getSharedCategoryCoords(category)[4])
                          else {
-                              this.setSharedCategoryWidth(category, (Renderer.getStringWidth(category) * catscale + 2 * catscale) * defaultscale)
+                              this.setSharedCategoryWidth(category, ((fontb.getWidth(category) / 3) * catscale + 2 * catscale) * this.getSharedCategoryCoords(category)[4])
                          }
                     }
                })
@@ -918,8 +918,17 @@ function hovering(mx, my, x, y, width, height) {
      else return false
 }
 
+function fixmodules() {
+     Module.getCategories().forEach(category => {
+          Module.setSharedCategoryWidth(category, Module.getSharedCategoryCoords(category)[2])
+          Module.setSharedCategoryHeight(category, Module.getSharedCategoryCoords(category)[3])
+          Module.setSharedCategoryScale(category, Module.getSharedCategoryCoords(category)[4])
+     })
+}
+
 gui.registerOpened(() => {
      sortmodules()
+     fixmodules()
      descriptionhover.register()
      moduleclick.register()
      settingclick.register()
@@ -1450,7 +1459,6 @@ const scroll = register("scrolled", (mx, my, dirrection) => {
           if (dirrection > 0) {
                Module.setSharedCategoryWidth(category, Module.getSharedCategoryCoords(category)[2] + Module.getSharedCategoryCoords(category)[2] / 15)
                Module.setSharedCategoryHeight(category, Module.getSharedCategoryCoords(category)[3] + Module.getSharedCategoryCoords(category)[3] / 15)
-
                Module.setSharedCategoryScale(category, Module.getSharedCategoryCoords(category)[4] + Module.getSharedCategoryCoords(category)[4] / 15)
           }
           if (dirrection < 0) {

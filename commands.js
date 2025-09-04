@@ -1,9 +1,9 @@
 import { leapplayeratyou } from "./features/LeapAlerts"
 import Dungeons from "./features/utils/Dungeons"
 import { chat } from "./features/utils/utils"
-import { gui } from "./gui/ClickGui"
+import { gui, Module } from "./gui/ClickGui"
 
-const commands = ["debug"]
+const commands = ["debug", "resetclickgui"]
 const debug = ["startp3", "endp3", "startboss", "endboss", "leap", "startp5", "endP5"]
 
 register("command", (...args) => {
@@ -44,6 +44,9 @@ register("command", (...args) => {
                     default:
                          chat("Enter a valid argument.")
                }
+          }
+          if (args[0].toLowerCase() == "resetclickgui") {
+               Module.resetGui()
           }
           return
      }
