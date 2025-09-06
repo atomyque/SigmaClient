@@ -4,14 +4,14 @@ let bagopened = false
 
 const autoPot = new Module("Dungeons", "Auto Potion", "Opens potion bag at the start of the run.")
 
-function openPotionBag() {
+function openPotionBag(player) {
      if (!autoPot.toggled || player !== Player.getName() || bagopened) return
      bagopened = true
      ChatLib.command("potionbag") // fuck you if you dont have a cookie
 }
 
 register("chat", player => {
-     openPotionBag()
+     openPotionBag(player)
 }).setCriteria("${player} is now ready!")
 
 register("chat", () => {

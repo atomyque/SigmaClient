@@ -1,7 +1,7 @@
 import { guiPiece } from "../gui/draggableGuis"
 import Dungeons from "./utils/Dungeons"
 import { gui, Module } from "../gui/ClickGui"
-import { chat } from "./utils/utils"
+import { chat, title } from "./utils/utils"
 
 let spiritactive = false
 let bonzoactive = false
@@ -21,8 +21,10 @@ let phoenixtext = ""
 
 const maskTimerModule = new Module("Dungeons", "Mask Timer Hud", "Shows timers related to masks.")
      .addSwitch("Toggle Everywhere", false)
+     .addSwitch("Mask Used Title", true)
+     .addColor("Mask Used Title Color", 0, 245, 0, 255, false)
      .addColor("Hud Color", 100, 255, 100, 255, false)
-     .addButton("Move Display", () => {
+     .addButton("Move Hud", () => {
           guiPiece.gui.open()
           maskTimerGui.edit()
      })
@@ -35,6 +37,10 @@ register("worldLoad", () => {
 
 const maskTimerGui = new guiPiece("maskTimer", 10, 150, 1).addText("Spirit Text", "Spirit &f : &a✔", 0, 0, 1, false, true).addText("Bonzo Text", "Bonzo &f : &a✔", 0, 10, 1, false, true).addText("Phoenix Text", "Phoenix &f : &a✔", 0, 20, 1, false, true)
 
+function masktitle(text) {
+     if (!maskTimerModule.toggled || !maskTimerModule.switches["Mask Used Title"]) return
+     title(text, true, maskTimerModule.color["Mask Used Title Color"].r, maskTimerModule.color["Mask Used Title Color"].g, maskTimerModule.color["Mask Used Title Color"].b, "random.orb", 1, 2)
+}
 function refreshcolors() {
      maskTimerGui.text["Spirit Text"].r = maskTimerModule.color["Hud Color"].r
      maskTimerGui.text["Spirit Text"].g = maskTimerModule.color["Hud Color"].g
@@ -113,21 +119,25 @@ register("chat", pet => {
 }).setCriteria("You summoned your ${pet}!")
 
 register("chat", () => {
+     masktitle("Bonzo Mask Used!")
      bonzoinvtimer = 3 * 20
      bonzotimer = 180 * 20
 }).setCriteria("Your Bonzo's Mask saved your life!")
 
 register("chat", () => {
+     masktitle("Bonzo Mask Used!")
      bonzoinvtimer = 3 * 20
      bonzotimer = 180 * 20
 }).setCriteria("Your ⚚ Bonzo's Mask saved your life!")
 
 register("chat", () => {
+     masktitle("Spirit Mask Used!")
      spiritinvtimer = 3 * 20
      spirittimer = 30 * 20
 }).setCriteria("Second Wind Activated! Your Spirit Mask saved your life!")
 
 register("chat", () => {
+     masktitle("Phoenix Pet Used!")
      phoenixinvtimer = 4 * 20
      phoenixtimer = 60 * 20
 }).setCriteria("Your Phoenix Pet saved you from certain death!")
