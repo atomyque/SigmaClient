@@ -1,6 +1,7 @@
 import { guiPiece } from "../gui/draggableGuis"
 import Dungeons from "./utils/Dungeons"
 import { gui, Module } from "../gui/ClickGui"
+import { chat } from "./utils/utils"
 
 let spiritactive = false
 let bonzoactive = false
@@ -63,30 +64,34 @@ register("tick", () => {
 })
 
 register("packetReceived", packet => {
-     Client.scheduleTask(1, () => {
-          if (Player.getContainer().getName() == "Your Equipment and Stats") {
-               // chat("ea")
-               closeafter.register()
-               if (!Player.getContainer().getStackInSlot(11).getName().includes("Spirit Mask") && !Player.getContainer().getStackInSlot(11).getName().includes("Bonzo's Mask")) {
+     // Client.scheduleTask(2, () => {
+     let count = 0
+     const svtick = register("packetReceived", () => {
+          count++
+          if (count > 2) return svtick.unregister()
+          if (Player?.getContainer()?.getName() == "Your Equipment and Stats") {
+               if (!Player.getContainer()?.getStackInSlot(11)?.getName()?.includes("Spirit Mask") && !Player.getContainer()?.getStackInSlot(11)?.getName()?.includes("Bonzo's Mask")) {
                     spiritactive = false
                     bonzoactive = false
 
                     return
                }
 
-               if (Player.getContainer().getStackInSlot(11).getName().includes("Bonzo's Mask")) {
+               if (Player.getContainer()?.getStackInSlot(11)?.getName()?.includes("Bonzo's Mask")) {
                     spiritactive = false
                     bonzoactive = true
                     // chat("e")
                     return
                }
-               if (Player.getContainer().getStackInSlot(11).getName().includes("Spirit Mask")) {
+               if (Player.getContainer()?.getStackInSlot(11)?.getName()?.includes("Spirit Mask")) {
                     spiritactive = true
                     bonzoactive = false
                     // chat("e")
                }
           }
-     })
+     }).setFilteredClass(net.minecraft.network.play.server.S32PacketConfirmTransaction)
+
+     // })
 }).setFilteredClass(net.minecraft.network.play.server.S2DPacketOpenWindow)
 
 register("chat", (level, pet) => {
@@ -157,3 +162,7 @@ const timer = register("packetReceived", () => {
      maskTimerGui.text["Bonzo Text"].text = bonzotext
      maskTimerGui.text["Phoenix Text"].text = phoenixtext
 }).setFilteredClass(S32PacketConfirmTransaction)
+
+register("worldUnload", () => {
+     bonzotimer = 0
+})

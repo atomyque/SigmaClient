@@ -162,7 +162,7 @@ register("packetReceived", packet => {
      const playername = new Entity(entity).getName()
 
      if (distance2d(Player.getX(), Player.getZ(), pX, pZ) <= 2 && Math.abs(pY - Player.getY()) <= 2) {
-          if (leapModule.switches["Send in chat"]) chat(`&5${leapModule.switches["Show classes"] == true ? (typeof playerclasses[playername] == "undefined" ? "Unknown Player" : playerclasses[playername]) : playername} has leapt to you.`)
+          if (leapModule.switches["Send in chat"]) chat(`&5${leapModule.switches["Show classes"] == true ? Dungeons.getPlayerClass(playername) : playername} has leapt to you.`)
           if (inLeapBox() && !leapt.includes(playername)) {
                leapt.push(playername)
                if (leapt.length == inLeapBox()[1]) {
@@ -172,7 +172,7 @@ register("packetReceived", packet => {
                     return
                }
 
-               LeapAlert.text["text"].text = `&5${leapModule.switches["Show classes"] == true ? (typeof playerclasses[playername] == "undefined" ? "Unknown Player" : playerclasses[playername]) : playername} leapt`
+               LeapAlert.text["text"].text = `&5${leapModule.switches["Show classes"] == true ? Dungeons.getPlayerClass(playername) : playername} leapt`
                playSound("random.orb", 1, 2)
                timer = 500
                clock.register()
@@ -193,7 +193,7 @@ function inLeapBox() {
      const pz = Player.getZ()
 
      for (let box of leapBox.all) {
-          if (playerclasses[Player.getName()] !== box.dungeonclass) continue
+          if (Dungeons.getPlayerClass(Player.getName()) !== box.dungeonclass) continue
 
           let minX = Math.min(box.x1, box.x2)
           let maxX = Math.max(box.x1, box.x2)
@@ -229,7 +229,7 @@ let phase = false
 register("renderWorld", () => {
      if (!Dungeons.inBossRoom || !leapModule.toggled || !leapModule.switches["Render Boxes"]) return
      leapBox.all.forEach(box => {
-          if (playerclasses[Player.getName()] !== box.dungeonclass || box.name == "actualtunnel") return false
+          if (Dungeons.getPlayerClass(Player.getName()) !== box.dungeonclass || box.name == "actualtunnel") return false
           //   chat(box.z1)
           const x1 = box.x1
           const y1 = box.y1
@@ -266,42 +266,20 @@ register("renderWorld", () => {
 })
 
 let players = []
-export let playerclasses = {}
+
 register("command", () => {
-     getclasses()
+     Dungeons.getclasses()
 }).setName("getclass")
 
 register("chat", () => {
-     getclasses()
      leapt = []
      spot = []
 }).setCriteria("[NPC] Mort: Good luck.")
 
-function getclasses() {
-     playerclasses = {}
-     // players.forEach(playername => {
-     TabList.getNames().forEach(nm => {
-          print(nm)
-          let regex = /\[\d+\]\s+([A-Za-z0-9_]+)(?:\s+[^\w\s])*\s+\(([A-Za-z_]+)/ //chat gpt regex
-          const clean = ChatLib.removeFormatting(nm).trim()
-
-          let match1 = clean.match(regex)
-          if (match1) {
-               let name = match1[1]
-               let playerClass = match1[2]
-               if (name) {
-                    playerclasses[name] = playerClass
-               }
-          }
-     })
-     // })
-}
-
 register("command", (...args) => {
-     chat(playerclasses[args])
+     chat(Dungeons.getPlayerClass(args))
 }).setName("tes")
-
-register("command", (...args) => (playerclasses[args[0]] = args[1])).setName("modify")
+register("command", (...args) => (Dungeons.playerclasses[args[0]] = args[1])).setName("modify")
 
 let spot = []
 
@@ -315,7 +293,7 @@ register("packetReceived", packet => {
      const username = ctEntity.getName()
      const [x, y, z] = [ctEntity.getX(), ctEntity.getY(), ctEntity.getZ()]
 
-     if (!Object.keys(playerclasses).includes(username)) return
+     if (!Object.keys(Dungeons.playerclasses).includes(username)) return
      if (!Dungeons.inBossRoom) return
 
      for (let box of leapBox.all) {
@@ -331,14 +309,14 @@ register("packetReceived", packet => {
           if (x >= minX - 0.5 && x <= maxX + 0.5 && y >= minY && y <= maxY && z >= minZ - 0.5 && z <= maxZ + 0.5 && !spot.includes(box.name)) {
                // chat(username)
                if (!Object.keys(hiddenplayers).includes(username) && box.name !== "actualtunnel") hiddenplayers[username] = box.name
-               if (playerclasses[username] !== box.dungeonclass) continue
+               if (Dungeons.getPlayerClass(username) !== box.dungeonclass) continue
                // if (playerclasses[username] == "Mage" && !leapt.includes(username)) leapt.push(username)
                spot.push(box.name)
 
                if (box.location == false || !Dungeons.inp3) return
                otherclock.register()
                othertimer = 750
-               PositionalAlerts.text["text"].text = `&a${leapModule.switches["Show classes"] == true ? (typeof playerclasses[username] == "undefined" ? "Unknown Player" : playerclasses[username]) : username} is at ${box.name}`
+               PositionalAlerts.text["text"].text = `&a${leapModule.switches["Show classes"] == true ? Dungeons.getPlayerClass(username) : username} is at ${box.name}`
                playSound("note.pling", 1, 2)
                continue
           }
@@ -346,7 +324,7 @@ register("packetReceived", packet => {
           if (!(x >= minX - 0.5 && x <= maxX + 0.5 && y >= minY && y <= maxY && z >= minZ - 0.5 && z <= maxZ + 0.5)) {
                // hiddenplayers = hiddenplayers.filter(player => player !== username)
                if (hiddenplayers[username] == box.name) delete hiddenplayers[username]
-               if (playerclasses[username] !== box.dungeonclass) continue
+               if (Dungeons.getPlayerClass(username) !== box.dungeonclass) continue
                spot = spot.filter(player => player !== box.name)
           }
      }
@@ -363,7 +341,6 @@ register("chat", () => {
 
 register("worldUnload", () => {
      players = []
-     playerclasses = {}
      hiddenplayers = {}
 })
 

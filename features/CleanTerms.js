@@ -1,7 +1,7 @@
 import Dungeons from "./utils/Dungeons"
 import { guiPiece } from "../gui/draggableGuis"
 import { gui, Module } from "../gui/ClickGui"
-import { colors, playSound } from "./utils/utils"
+import { playSound } from "./utils/utils"
 
 const cleanTerm = new Module("Dungeons", "Clean Terms", "Makes the terminal phase look cleaner with less information on your screen.")
      .addSwitch("Disable Titles", false)

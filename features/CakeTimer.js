@@ -26,8 +26,10 @@ register("step", () => {
      const h = 60 * 60 * 1000
      const days2 = Date.now()
      const cakeday = sigmadata.lastcake
-     const days = 2 - (days2 - cakeday) / h
-     if (2 - (days2 - cakeday) / h < 0) return (CakeTimer.text["text"].text = "&aCakes Ready!")
+     const difference = days2 - cakeday
+     const days = 2 - difference / 1000 / 60 / 60 / 24
+     const hours = 49 - difference / 1000 / 60 / 60 - Math.floor(days) * 24
+     if (days < 0) return (CakeTimer.text["text"].text = "&aCakes Ready!")
      if (CakeTimerModule.switches["Only Show When Ready"]) return CakeTimer.dontdraw()
-     CakeTimer.text["text"].text = `&c${Math.floor(days)}d${Math.floor(days * 24 - Math.floor(days) * 24 + 1)}h`
+     CakeTimer.text["text"].text = `&c${Math.floor(days)}d${hours}h`
 }).setFps(1)

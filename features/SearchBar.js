@@ -65,7 +65,7 @@ register("renderItemOverlayIntoGui", (item, x, y, event) => {
 
 const guis = ["inventory", "container", "chest"]
 
-let y = Renderer.screen.getHeight() - 50
+let y = Renderer.screen.getHeight() - 25
 const darkwhite = Renderer.color(150, 150, 150, 255)
 const white = Renderer.color(255, 255, 255, 255)
 
@@ -78,7 +78,7 @@ const bordercolor = () => {
 
 register("postGuiRender", () => {
      if (!SearchBar.toggled) return
-     y = Renderer.screen.getHeight() - 50
+     y = Renderer.screen.getHeight() - 25
      const screen = Client.getMinecraft().field_71462_r
      let found = false
      guis.forEach(guiname => {
