@@ -1,1 +1,1 @@
-Discord : https://discord.gg/SAgXg3Sm
+Discord : https://discord.gg/EgMrTakFUB
