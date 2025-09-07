@@ -31,5 +31,5 @@ register("step", () => {
      const hours = 49 - difference / 1000 / 60 / 60 - Math.floor(days) * 24
      if (days < 0) return (CakeTimer.text["text"].text = "&aCakes Ready!")
      if (CakeTimerModule.switches["Only Show When Ready"]) return CakeTimer.dontdraw()
-     CakeTimer.text["text"].text = `&c${Math.floor(days)}d${hours}h`
+     CakeTimer.text["text"].text = `&c${Math.floor(days)}d${Math.floor(hours)}h`
 }).setFps(1)

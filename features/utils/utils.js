@@ -32,3 +32,14 @@ export function title(text, shadow = true, r, g, b, sound = "", volume = 1, pitc
           titlerenderer.unregister()
      }, duration)
 }
+
+export const setServerTimeout = (fn, count = 1) => {
+     if (count < 0) throw new Error("setServerTimeout Cannot have a negative timeout.")
+     const svtick = register("packetReceived", () => {
+          count--
+          if (count < 0) {
+               fn()
+               svtick.unregister()
+          }
+     }).setFilteredClass(net.minecraft.network.play.server.S32PacketConfirmTransaction)
+}
