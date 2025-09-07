@@ -1,4 +1,5 @@
 import { Module } from "../gui/ClickGui"
+import { chat } from "./utils/utils"
 
 const CouldntFind = new Module("Dungeons", "Couldn't Find Notifier", `Sends a message in chat when you get "Couldn't Find Player"`)
 
@@ -15,6 +16,7 @@ const itemdetect = register("tick", () => {
           if (lore == "§5§o") break
           unfoudplayers.push(ChatLib.removeFormatting(lore).replace(" - ", ""))
      }
+     chat(`Couldn't Find : ${unfoudplayers.join(", ")}`)
      ChatLib.command(`pc [Σ] Couldn't Find : ${unfoudplayers.join(", ")}`)
 })
 

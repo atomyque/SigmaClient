@@ -42,6 +42,9 @@ export default new (class Dngs {
                this.inp5 = true
                this.inp3 = false
           }).setCriteria("[BOSS] Necron: Sometimes when you have a problem, you just need to destroy it all and start again.")
+          register("chat", () => {
+               this.inDungeon = true
+          }).setCriteria("${player} is now ready!")
           register("chat", message => {
                const stage = message.match(/\((\d+)\/(\d+)\)/)
 

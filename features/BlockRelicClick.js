@@ -16,7 +16,8 @@ register("playerInteract", (action, pos, event) => {
           Object.keys(relics).forEach(key => {
                const relic = relics[key]
                const lookinatrelic = relic.x == Player.lookingAt()?.getX() && relic.y == Player.lookingAt()?.getY() && relic.z == Player.lookingAt()?.getZ()
-               if (lookinatrelic && key.toString() !== pickeduprelick && Player.getHeldItem()?.getID() === 397) {
+               //  && Player.getHeldItem()?.getID() === 397
+               if (lookinatrelic && key.toString() !== pickeduprelick) {
                     cancel(event)
                }
           })

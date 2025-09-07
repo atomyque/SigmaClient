@@ -1,5 +1,6 @@
 import { Module } from "../gui/ClickGui"
 import { guiPiece } from "../gui/draggableGuis"
+import { playSound } from "./utils/utils"
 
 const RagAlert = new Module("Dungeons", "Ragnarok Alert", "Alerts you when you should cast Ragnarok at p5.")
      .addTextBox("Hud Text", "&lRagnarok!")

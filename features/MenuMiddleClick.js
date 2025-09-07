@@ -18,7 +18,7 @@ register("guiMouseClick", (mx, my, mb, gui, event) => {
 function middleclick(event) {
      cancel(event)
      const container = Player.getContainer()
-     const slot = Client.currentGui.getSlotUnderMouse().getIndex()
+     const slot = Client.currentGui?.getSlotUnderMouse()?.getIndex()
 
      container.click(slot, false, "MIDDLE")
 }
