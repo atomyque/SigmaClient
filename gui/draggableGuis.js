@@ -32,15 +32,15 @@ export class guiPiece {
      }
 
      addText(name, text, xoffset, yoffset, scale, centered, shadow = false, r = 255, g = 255, b = 255, alpha = 255) {
-          this.text[name] = { text, xoffset, yoffset, scale, centered, shadow, r, g, b, alpha }
+          this.text[name] = { text, xoffset, yoffset, scale, centered, shadow, r, g, b, alpha, drawn: true }
           return this
      }
      addRect(name, xoffset, yoffset, width, height, color) {
-          this.rect[name] = { xoffset, yoffset, width, height, color }
+          this.rect[name] = { xoffset, yoffset, width, height, color, drawn: true }
           return this
      }
      addItem(name, item, xoffset, yoffset, scale) {
-          this.item[name] = { item, xoffset, yoffset, scale }
+          this.item[name] = { item, xoffset, yoffset, scale, drawn: true }
           return this
      }
 
@@ -91,6 +91,7 @@ export class guiPiece {
           this.smallesty = Renderer.screen.getHeight()
           this.biggesttexty = 0
           Object.keys(this.text).forEach(name => {
+               if (!this.text[name].drawn) return
                const text = this.text[name].text
                const x = this.text[name].xoffset
                const y = this.text[name].yoffset
@@ -103,6 +104,7 @@ export class guiPiece {
                if (this.y + y * scale * this.scale + 4.5 * this.scale * scale > this.biggesttexty) this.biggesttexty = this.y + y * scale * this.scale + 6 * scale * this.scale
           })
           Object.keys(this.rect).forEach(name => {
+               if (!this.rect[name].drawn) return
                const x = this.rect[name].xoffset
                const y = this.rect[name].yoffset
                const width = this.rect[name].width
@@ -114,6 +116,7 @@ export class guiPiece {
                if (this.y + y * this.scale + height * this.scale > this.biggesttexty) this.biggesttexty = this.y + y * this.scale + height * this.scale + 5 * this.scale
           })
           Object.keys(this.item).forEach(name => {
+               if (!this.item[name].drawn) return
                const x = this.item[name].xoffset
                const y = this.item[name].yoffset
                const width = 16 * this.item[name].scale
@@ -168,6 +171,7 @@ export class guiPiece {
           }
 
           Object.keys(this.text).forEach(name => {
+               if (!this.text[name].drawn) return
                Renderer.retainTransforms(true)
                //    ChatLib.chat(scl)
                const scl = this.scale * this.text[name].scale
@@ -177,6 +181,7 @@ export class guiPiece {
                Renderer.retainTransforms(false)
           })
           Object.keys(this.rect).forEach(name => {
+               if (!this.rect[name].drawn) return
                Renderer.retainTransforms(true)
                const scl = this.scale
                Renderer.scale(scl, scl)
@@ -185,10 +190,11 @@ export class guiPiece {
                Renderer.retainTransforms(false)
           })
           Object.keys(this.item).forEach(name => {
+               if (!this.item[name].drawn) return
                Renderer.retainTransforms(true)
                const scl = this.scale * this.item[name].scale
                Renderer.scale(scl, scl)
-               new Item(this.item[name].item).draw(this.x / scl + this.item[name].xoffset, this.y / scl + this.item[name].xoffset)
+               new Item(this.item[name].item).draw(this.x / scl + this.item[name].xoffset, this.y / scl + this.item[name].yoffset)
                Renderer.retainTransforms(false)
           })
 

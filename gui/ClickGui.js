@@ -55,12 +55,13 @@ export class Module {
           this.catx = undefined
           this.caty = undefined
           this.width = undefined
-          this.height = 15 * defaultscale
+          this.height = 20 * defaultscale
           this.name = name
           this.toggled = false
           this.switches = {}
           this.sliders = {}
           this.color = {}
+          this.selectors = {}
           this.buttons = {}
           this.textBox = {}
           this.separator = []
@@ -154,6 +155,12 @@ export class Module {
           return this
      }
 
+     addSelector(name, ...options) {
+          this.paramorder.push(name)
+          this.selectors[name] = { value: options[0], valuelist: options }
+          return this
+     }
+
      addColor(name, r, g, b, alpha, alphable = false) {
           this.paramorder.push(name)
           this.color[name] = { r, g, b, alpha, alphable }
@@ -169,26 +176,14 @@ export class Module {
                throw new Error("Name must be a string")
           }
 
-          if (this.switches[name] !== undefined) {
-               return "switch"
-          }
-          if (this.sliders[name] !== undefined) {
-               return "slider"
-          }
-          if (this.buttons[name] !== undefined) {
-               return "button"
-          }
-          if (this.separator.includes(name)) {
-               return "separator"
-          }
-          if (this.textBox[name] !== undefined) {
-               return "textbox"
-          }
-          if (this.color[name] !== undefined) {
-               return "color"
-          } else {
-               return undefined
-          }
+          if (this.switches[name] !== undefined) return "switch"
+          if (this.sliders[name] !== undefined) return "slider"
+          if (this.buttons[name] !== undefined) return "button"
+          if (this.separator.includes(name)) return "separator"
+          if (this.textBox[name] !== undefined) return "textbox"
+          if (this.color[name] !== undefined) return "color"
+          if (this.selectors[name] !== undefined) return "selector"
+          else return undefined
      }
      getByName(name) {
           if (typeof name !== "string") {
@@ -344,6 +339,91 @@ export class Module {
                          true,
                          true
                     )
+               }
+               if (this.getTypeByName(name) == "selector") {
+                    drawStringSemiBold(
+                         this.selectors[name].value,
+                         this.catx + this.width / 2,
+                         this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2.5 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                         scale,
+                         true,
+                         true
+                    )
+                    if (!expanded.includes(this.name + name)) {
+                         Renderer.drawLine(
+                              Renderer.WHITE,
+                              this.catx + 3 * this.scale,
+                              this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) + 3 * this.scale,
+                              this.catx + 3 * this.scale + this.height / 2,
+                              this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) + this.height / 2,
+                              2 * this.scale,
+                              9
+                         )
+                         Renderer.drawLine(
+                              Renderer.WHITE,
+                              this.catx + 3 * this.scale,
+                              this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 3 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) - 3 * this.scale,
+                              this.catx + 3 * this.scale + this.height / 2,
+                              this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 3 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) - this.height / 2,
+                              2 * this.scale,
+                              9
+                         )
+                    }
+
+                    if (expanded.includes(this.name + name)) {
+                         const filteredlist = this.selectors[name].valuelist.slice().filter(item => item !== this.selectors[name].value)
+                         Renderer.drawLine(
+                              Renderer.WHITE,
+                              this.catx + 3 * this.scale,
+                              this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) + 3 * this.scale,
+                              this.catx + 3 * this.scale + this.height / 3,
+                              this.caty +
+                                   this.pos * this.height +
+                                   index * this.height +
+                                   details[this.name] * this.height -
+                                   this.getNameOrder().length * this.height +
+                                   this.height * 2 +
+                                   (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) +
+                                   this.height -
+                                   3 * this.scale,
+                              2 * this.scale,
+                              9
+                         )
+                         Renderer.drawLine(
+                              Renderer.WHITE,
+                              this.catx + 3 * this.scale + this.height / 1.5,
+                              this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 2 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) + 3 * this.scale,
+                              this.catx + 3 * this.scale + this.height / 3,
+                              this.caty +
+                                   this.pos * this.height +
+                                   index * this.height +
+                                   details[this.name] * this.height -
+                                   this.getNameOrder().length * this.height +
+                                   this.height * 2 +
+                                   (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0) +
+                                   this.height -
+                                   3 * this.scale,
+                              2 * this.scale,
+                              9
+                         )
+                         Renderer.drawRect(
+                              expandcolor,
+                              this.catx,
+                              this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 3 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                              this.width,
+                              this.height * filteredlist.length
+                         )
+                         filteredlist.forEach((selectoritem, index) => {
+                              drawStringSemiBold(
+                                   selectoritem,
+                                   this.catx + this.width / 2,
+                                   this.caty + this.pos * this.height + index * this.height + details[this.name] * this.height - this.getNameOrder().length * this.height + this.height * 3.5 + (Object.keys(expand).includes(this.name + name) ? expand[this.name + name] * this.height : 0),
+                                   scale,
+                                   true,
+                                   true
+                              )
+                         })
+                    }
                }
                if (this.getTypeByName(name) == "separator") {
                     Renderer.retainTransforms(false)
@@ -690,6 +770,10 @@ export class Module {
                     if (typeof currentmodule.textBox[name] == "undefined") return
                     this.textBox[name] = currentmodule.textBox[name]
                }
+               if (this.getTypeByName(name) == "selector") {
+                    if (typeof currentmodule.selectors[name] == "undefined") return
+                    this.selectors[name].value = currentmodule.selectors[name].value
+               }
           })
           this.height = currentmodule.height
           this.width = currentmodule.width
@@ -794,6 +878,7 @@ function saveModules() {
           color: m.color,
           scale: m.scale,
           catx: m.catx,
+          selectors: m.selectors,
           caty: m.caty,
           height: m.height,
           width: m.width
@@ -920,6 +1005,8 @@ function hovering(mx, my, x, y, width, height) {
 
 function fixmodules() {
      Module.getCategories().forEach(category => {
+          Module.setSharedCategoryX(category, Module.getSharedCategoryCoords(category)[0])
+          Module.setSharedCategoryY(category, Module.getSharedCategoryCoords(category)[1])
           Module.setSharedCategoryWidth(category, Module.getSharedCategoryCoords(category)[2])
           Module.setSharedCategoryHeight(category, Module.getSharedCategoryCoords(category)[3])
           Module.setSharedCategoryScale(category, Module.getSharedCategoryCoords(category)[4])
@@ -966,6 +1053,13 @@ const moduleclick = register("clicked", (mx, my, button, down) => {
                               expand = Object.keys(expand).filter(key => key !== module.name + c)
                               expanded = expanded.filter(key => key !== module.name + c)
                               count += module.color[c].alphable === true ? 7 : 6
+                         })
+                         Object.keys(module.selectors).forEach(c => {
+                              if (!expanded.includes(module.name + c)) return
+
+                              expand = Object.keys(expand).filter(key => key !== module.name + c)
+                              expanded = expanded.filter(key => key !== module.name + c)
+                              count += module.selectors[c].valuelist.length - 1
                          })
 
                          // expand = {}
@@ -1024,7 +1118,33 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                if (!module.indetails) return
 
                module.getNameOrder().forEach((name, index) => {
-                    if (expanded.includes(module.name + name)) {
+                    if (expanded.includes(module.name + name) && module.getTypeByName(name) == "selector") {
+                         const filteredlist = module.selectors[name].valuelist.slice().filter(item => item !== module.selectors[name].value)
+                         filteredlist.forEach((slk, i) => {
+                              if (
+                                   hovering(
+                                        mx,
+                                        my,
+                                        module.catx + 2 * module.scale,
+                                        module.caty +
+                                             module.pos * module.height +
+                                             index * module.height +
+                                             details[module.name] * module.height -
+                                             module.getNameOrder().length * module.height +
+                                             module.height * 3 +
+                                             1 * module.scale +
+                                             i * module.height +
+                                             (Object.keys(expand).includes(module.name + name) ? expand[module.name + name] * module.height : 0),
+                                        module.width,
+                                        module.height
+                                   ) &&
+                                   button == 0 &&
+                                   down
+                              )
+                                   module.selectors[name].value = slk
+                         })
+                    }
+                    if (expanded.includes(module.name + name) && module.getTypeByName(name) == "color") {
                          if (
                               hovering(
                                    mx,
@@ -1331,6 +1451,26 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                          }
                          if (module.getTypeByName(name) == "button") {
                               module.buttons[name]()
+                         }
+                         if (module.getTypeByName(name) == "selector") {
+                              const amount = module.selectors[name].valuelist.length - 1
+
+                              Module.getCategoryContent(module.category).forEach((mdl, i) => {
+                                   if (i <= idx) return
+                                   mdl.pos += expanded.includes(module.name + name) ? -amount : amount
+                              })
+
+                              module.paramorder.forEach((param, i) => {
+                                   if (i - 1 < index) return
+                                   if (Object.keys(expand).includes(module.name + param)) expand[module.name + param] += expanded.includes(module.name + name) ? -amount : amount
+                                   else expand[module.name + param] = amount
+                                   Object.keys(expand).includes(module.name + name)
+                              })
+                              if (expanded.includes(module.name + name)) {
+                                   expanded = expanded.filter(yeah => yeah !== module.name + name)
+                                   return
+                              }
+                              expanded.push(module.name + name)
                          }
                          if (module.getTypeByName(name) == "color") {
                               if (

@@ -11,7 +11,7 @@ const CleanMaxorModule = new Module("Dungeons", "Clean Maxor", "Adds indicators 
      .addColor("Subtitle Color", 0, 170, 0, 255, true)
      .addButton("Move Hud", () => {
           CleanMaxorHud.edit()
-          gui.open()
+          guiPiece.gui.open()
      })
 const CleanMaxorHud = new guiPiece("Clean Maxor Hud", Renderer.screen.getWidth() / 2, 100, 1).addText("text", "1/2", 0, 0, 2, true, true, 0, 245, 0, 255).addText("subtext", "Mage", 0, 12, 1, true, true, 0, 170, 0, 255)
 
