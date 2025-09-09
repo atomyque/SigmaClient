@@ -1,140 +1,141 @@
-// import RenderLibV2 from "../../RenderLibV2"
+import RenderLibV2 from "../../RenderLibV2"
+import { Module } from "../gui/ClickGui"
+import Dungeons from "./utils/Dungeons"
+import { title } from "./utils/utils"
 
-// let lanterncord = {}
-// let animation = false
-// let clicks = 0
-// let first = false
-// let second = false
-// register("renderOverlay", () => {
-//      Renderer.drawString(animation.toString(), 100, 100, true)
-// })
+let lanterncord = {}
+let animation = false
+let clicks = 0
+let first = false
+let second = false
+let ticks = 0
+let canbreak = false
+let devicedone = false
 
-// register("playerInteract", (action, pos, event) => {
-//      if (action.toString() == "RIGHT_CLICK_BLOCK") {
-//           if (Player.lookingAt().getX() == 110 && Player.lookingAt().getY() == 121 && Player.lookingAt().getZ() == 91) {
-//                lanterncord = {}
-//                first = true
-//                clicks = 0
-//                nigg.register()
-//           }
-//           if (Object.keys(lanterncord).length < 1) return
-//           if (lanterncord[0].x - 1 == Player.lookingAt().getX() && lanterncord[0].y == Player.lookingAt().getY() && lanterncord[0].z == Player.lookingAt().getZ()) {
-//                deletefirst()
-//                ChatLib.chat("hi")
-//           } else {
-//                if (Player.isSneaking()) return
-//                cancel(event)
-//           }
-//      }
-// })
-// let clickedbuttons = {}
+const SimonSays = new Module("Dungeons", "Simon Says", "Helps you with stuff related to simon says.")
+     .addSwitch("Solver", true)
+     .addSwitch("Block Wrong Clicks", false)
+     .addSwitch("Send Reset In Party Chat", true)
+     .addSwitch("Reset Title", true)
+     .addTextBox("Reset Text", "! SSRS SSRS SSRS !")
+     .addTextBox("Reset Title Text", "&c&lSS RS!")
 
-// register("packetReceived", (packet, event) => {
-//      ChatLib.chat("bro")
-//      ChatLib.chat(packet.func_179827_b().func_177958_n())
-// }).setFilteredClass(net.minecraft.network.play.server.S23PacketBlockChange)
+register("playerInteract", (action, pos, event) => {
+     if (!SimonSays.switches["Solver"] || !SimonSays.toggled || !SimonSays.switches["Block Wrong Clicks"]) return
+     if (action.toString() == "RIGHT_CLICK_BLOCK") {
+          if (Player.lookingAt().getX() == 110 && Player.lookingAt().getY() == 121 && Player.lookingAt().getZ() == 91) {
+               lanterncord = {}
+               first = true
+               clicks = 0
+          }
+          if (Object.keys(lanterncord).length < 1) return
+          if (lanterncord[0].x - 1 == Player.lookingAt().getX() && lanterncord[0].y == Player.lookingAt().getY() && lanterncord[0].z == Player.lookingAt().getZ()) {
+               deletefirst()
+          } else {
+               if (Player.isSneaking()) return
+               cancel(event)
+          }
+     }
+})
 
-// const nigg = register("packetReceived", () => {
-//      let found = false
+register("chat", () => {
+     lanterncord = {}
+     animation = false
+     clicks = 0
+     first = false
+     second = false
+     ticks = 0
+     canbreak = false
+     devicedone = false
+     ssbreak.register()
+}).setCriteria("[BOSS] Goldor: Who dares trespass into my domain?")
+register("chat", player => {
+     if (Dungeons.getPlayerClass(player) != "Berserk") ssbreak.unregister()
+}).setCriteria("${player} completed a device! ${ok}")
 
-//      //  for (let i = 0; i < 4; i++) {
-//      //       let dupe = false
-//      //       for (let int = 0; int < 4; int++) {
-//      //            if (World.getBlockAt(110, 120 + int, 92 + i).isPowered()) {
-//      //                 Object.keys(clickedbuttons).forEach(element => {
-//      //                      const y = clickedbuttons[element].y
-//      //                      const z = clickedbuttons[element].z
-//      //                      if (y == 120 + int && z == 92 + i) {
-//      //                           dupe = true
-//      //                      }
-//      //                 })
-//      //                 if (!dupe) {
-//      //                      clickedbuttons[Object.keys(clickedbuttons).length] = { x: 110, y: 120 + int, z: 92 + i }
-//      //                 }
-//      //            }
-//      //       }
-//      //  }
+function blockDetected() {}
 
-//      for (let i = 0; i < 4; i++) {
-//           for (let int = 0; int < 4; int++) {
-//                let dupe = false
-//                if (World.getBlockAt(111, 120 + int, 92 + i).type.getName() == "Sea Lantern") {
-//                     Object.keys(lanterncord).forEach(element => {
-//                          const y = lanterncord[element].y
-//                          const z = lanterncord[element].z
+const ssbreak = register("packetReceived", () => {
+     let found = false
+     ticks--
 
-//                          if (y == 120 + int && z == 92 + i) dupe = true
-//                     })
-//                     found = true
-//                     if (!dupe) lanterncord[Object.keys(lanterncord).length] = { x: 111, y: 120 + int, z: 92 + i }
-//                     if (Object.keys(lanterncord).length >= 1) {
-//                          animation = true
-//                     }
-//                }
-//                if (i == 3 && int == 3 && !found && first && Object.keys(lanterncord).length !== 0) {
-//                     animation = false
-//                     first = false
-//                     second = true
-//                     if (Object.keys(lanterncord).length == 3) deletefirst()
-//                }
-//           }
-//      }
-// })
-//      .setFilteredClass(net.minecraft.network.play.server.S32PacketConfirmTransaction)
-//      .unregister()
+     for (let i = 0; i < 16; i++) {
+          const blocky = Math.floor(i / 4)
+          const blockz = i - blocky * 4
+          const dupe = Object.keys(lanterncord).some(block => lanterncord[block].y == 120 + blocky && lanterncord[block].z == 92 + blockz)
 
-// function deletefirst() {
-//      const keys = Object.keys(lanterncord)
-//           .map(Number)
-//           .sort((a, b) => a - b)
+          if (World.getBlockAt(111, 120 + blocky, 92 + blockz).type.getID() !== 169) continue
+          found = true
+          ticks = 12
+          canbreak = true
+          if (dupe) continue
+          lanterncord[Object.keys(lanterncord).length] = { x: 111, y: 120 + blocky, z: 92 + blockz }
+     }
+     if (!found && first && Object.keys(lanterncord).length !== 0) {
+          first = false
+          found = true
+          if (Object.keys(lanterncord).length == 3) deletefirst()
+     }
 
-//      for (let i = 1; i < keys.length; i++) {
-//           lanterncord[i - 1] = lanterncord[i]
-//      }
-//      delete lanterncord[keys[keys.length - 1]]
-// }
+     if (ticks > 0 || !canbreak || devicedone) return
+     if (World.getBlockAt(110, 120, 92).type.getID() != 0) return
+     canbreak = false
+     lanterncord = {}
+     if (SimonSays.switches["Send Reset In Party Chat"]) ChatLib.command(`pc ${SimonSays.textBox["Reset Text"]}`)
+     if (!SimonSays.switches["Reset Title"]) return
+     title(SimonSays.textBox["Reset Title Text"], true, 255, 255, 255, "random.anvil_land", 1, 1)
+})
+     .setFilteredClass(net.minecraft.network.play.server.S32PacketConfirmTransaction)
+     .unregister()
 
-// register("command", () => {
-//      Object.keys(lanterncord).forEach(element => {
-//           ChatLib.chat(lanterncord[element].z)
-//      })
-// }).setName("pintblocks")
+function deletefirst() {
+     const keys = Object.keys(lanterncord)
+          .map(Number)
+          .sort((a, b) => a - b)
 
-// register("renderWorld", () => {
-//      Object.keys(lanterncord).forEach(lantern => {
-//           const x1 = lanterncord[lantern]?.x
-//           const y1 = lanterncord[lantern]?.y + 0.35
-//           const z1 = lanterncord[lantern]?.z + 0.3
+     for (let i = 1; i < keys.length; i++) {
+          lanterncord[i - 1] = lanterncord[i]
+     }
+     delete lanterncord[keys[keys.length - 1]]
+}
 
-//           const x2 = lanterncord[lantern]?.x - 0.125
-//           const y2 = lanterncord[lantern]?.y + 0.625
-//           const z2 = lanterncord[lantern]?.z + 0.7
+register("renderWorld", () => {
+     if (!SimonSays.switches["Solver"] || !SimonSays.toggled) return
+     Object.keys(lanterncord).forEach(lantern => {
+          const x1 = lanterncord[lantern]?.x
+          const y1 = lanterncord[lantern]?.y + 0.35
+          const z1 = lanterncord[lantern]?.z + 0.3
 
-//           const r = 1
-//           const g = 1
-//           const b = 1
-//           const a = 1
-//           const phase = false
+          const x2 = lanterncord[lantern]?.x - 0.125
+          const y2 = lanterncord[lantern]?.y + 0.625
+          const z2 = lanterncord[lantern]?.z + 0.7
 
-//           Tessellator.drawString((parseInt(lantern) + 1).toString(), x1 - Math.abs(x2 - x1), y1 + Math.abs(y2 - y1), z1 + Math.abs(z2 - z1) / 2, Renderer.WHITE, false, 0.03, false)
+          const r = 1
+          const g = 1
+          const b = 1
+          const a = 1
+          const phase = true
 
-//           RenderLibV2.drawLine(x1, y1 + 0.01, z1, x1, y1 + 0.01, z2, r, g, b, a, phase, 3)
-//           RenderLibV2.drawLine(x2, y1 + 0.01, z1, x2, y1 + 0.01, z2, r, g, b, a, phase, 3)
-//           RenderLibV2.drawLine(x1, y1 + 0.01, z1, x2, y1 + 0.01, z1, r, g, b, a, phase, 3)
-//           RenderLibV2.drawLine(x1, y1 + 0.01, z2, x2, y1 + 0.01, z2, r, g, b, a, phase, 3)
-//           // First Layer
+          Tessellator.drawString((parseInt(lantern) + 1).toString(), x1 - Math.abs(x2 - x1), y1 + Math.abs(y2 - y1), z1 + Math.abs(z2 - z1) / 2, Renderer.WHITE, false, 0.03, false)
 
-//           RenderLibV2.drawLine(x1, y2, z1, x1, y2, z2, r, g, b, a, phase, 3)
-//           RenderLibV2.drawLine(x2, y2, z1, x2, y2, z2, r, g, b, a, phase, 3)
-//           RenderLibV2.drawLine(x1, y2, z1, x2, y2, z1, r, g, b, a, phase, 3)
-//           RenderLibV2.drawLine(x1, y2, z2, x2, y2, z2, r, g, b, a, phase, 3)
-//           //Second Layer
+          RenderLibV2.drawLine(x1, y1 + 0.01, z1, x1, y1 + 0.01, z2, r, g, b, a, phase, 3)
+          RenderLibV2.drawLine(x2, y1 + 0.01, z1, x2, y1 + 0.01, z2, r, g, b, a, phase, 3)
+          RenderLibV2.drawLine(x1, y1 + 0.01, z1, x2, y1 + 0.01, z1, r, g, b, a, phase, 3)
+          RenderLibV2.drawLine(x1, y1 + 0.01, z2, x2, y1 + 0.01, z2, r, g, b, a, phase, 3)
+          // First Layer
 
-//           RenderLibV2.drawLine(x1, y1 + 0.01, z1, x1, y2, z1, r, g, b, a, phase, 3)
-//           RenderLibV2.drawLine(x2, y1 + 0.01, z1, x2, y2, z1, r, g, b, a, phase, 3)
-//           RenderLibV2.drawLine(x1, y1 + 0.01, z2, x1, y2, z2, r, g, b, a, phase, 3)
-//           RenderLibV2.drawLine(x2, y1 + 0.01, z2, x2, y2, z2, r, g, b, a, phase, 3)
-//      })
-//      //  RenderLibV2.drawLine(58, 169.01, 40, 58, 169.01, 50, 1, 1, 1, 1, false, 2)
-//      //  RenderLibV2.drawLine(58, 169, 40, 58, 169, 50, 1, 1, 1, 1, false, 2)
-// })
+          RenderLibV2.drawLine(x1, y2, z1, x1, y2, z2, r, g, b, a, phase, 3)
+          RenderLibV2.drawLine(x2, y2, z1, x2, y2, z2, r, g, b, a, phase, 3)
+          RenderLibV2.drawLine(x1, y2, z1, x2, y2, z1, r, g, b, a, phase, 3)
+          RenderLibV2.drawLine(x1, y2, z2, x2, y2, z2, r, g, b, a, phase, 3)
+          //Second Layer
+
+          RenderLibV2.drawLine(x1, y1 + 0.01, z1, x1, y2, z1, r, g, b, a, phase, 3)
+          RenderLibV2.drawLine(x2, y1 + 0.01, z1, x2, y2, z1, r, g, b, a, phase, 3)
+          RenderLibV2.drawLine(x1, y1 + 0.01, z2, x1, y2, z2, r, g, b, a, phase, 3)
+          RenderLibV2.drawLine(x2, y1 + 0.01, z2, x2, y2, z2, r, g, b, a, phase, 3)
+          Tessellator.draw()
+     })
+     //  RenderLibV2.drawLine(58, 169.01, 40, 58, 169.01, 50, 1, 1, 1, 1, false, 2)
+     //  RenderLibV2.drawLine(58, 169, 40, 58, 169, 50, 1, 1, 1, 1, false, 2)
+})
