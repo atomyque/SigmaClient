@@ -24,6 +24,12 @@ register("packetReceived", (packet, event) => {
 register("chat", () => {
      Dungeons.inp3 = false
      termcounter.dontdraw()
+     if (!cleanTerm.toggled || !cleanTerm.switches["Phase Completed Title"]) return
+     phasefinished.register()
+     playSound("random.orb", 1, 1)
+     setTimeout(() => {
+          phasefinished.unregister()
+     }, 750)
 }).setCriteria("The Core entrance is opening!")
 
 let first = false
@@ -63,6 +69,7 @@ register("worldLoad", () => {
 register("chat", () => {
      termcounter.text["text"].text = 0 + "/" + 7
      termcounter.text["subtext"].text = ""
+     if (!cleanTerm.toggled) return
      termcounter.draw()
 }).setCriteria("[BOSS] Goldor: Who dares trespass into my domain?")
 

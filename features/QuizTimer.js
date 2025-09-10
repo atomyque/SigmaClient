@@ -12,8 +12,9 @@ const QuizTimerModule = new Module("Dungeons", "Quiz Timer", "Displays a timer o
 const QuizTimerHud = new guiPiece("Quiz Timer", Renderer.screen.getWidth() / 2, 50, 3).addText("text", "&5Quiz &7: &f4.15s", 0, 0, 1, true, true)
 
 let ticks = 0
-
+let finished = true
 register("chat", () => {
+     finished = false
      questionned = true
      ticks = 11 * 20
 }).setCriteria("[STATUE] Oruo the Omniscient: I am Oruo the Omniscient. I have lived many lives. I have learned all there is to know.")
@@ -26,9 +27,15 @@ register("chat", player => {
 
 register("chat", player => {
      QuizTimerHud.dontdraw()
+     finished = true
 }).setCriteria("[STATUE] Oruo the Omniscient: ${player} answered the final question correctly!")
 
 register("packetReceived", () => {
+     if (finished) {
+          QuizTimerHud.dontdraw()
+          finished = false
+          return
+     }
      if (!QuizTimerModule.toggled) return QuizTimerHud.dontdraw()
      if (ticks <= 0) {
           if (!questionned) return
@@ -43,5 +50,6 @@ register("packetReceived", () => {
 
 register("worldUnload", () => {
      questionned = false
+     finished = true
      QuizTimerHud.dontdraw()
 })

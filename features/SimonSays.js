@@ -53,8 +53,6 @@ register("chat", player => {
      if (Dungeons.getPlayerClass(player) != "Berserk") ssbreak.unregister()
 }).setCriteria("${player} completed a device! ${ok}")
 
-function blockDetected() {}
-
 const ssbreak = register("packetReceived", () => {
      let found = false
      ticks--
@@ -134,8 +132,8 @@ register("renderWorld", () => {
           RenderLibV2.drawLine(x2, y1 + 0.01, z1, x2, y2, z1, r, g, b, a, phase, 3)
           RenderLibV2.drawLine(x1, y1 + 0.01, z2, x1, y2, z2, r, g, b, a, phase, 3)
           RenderLibV2.drawLine(x2, y1 + 0.01, z2, x2, y2, z2, r, g, b, a, phase, 3)
-          Tessellator.draw()
      })
+     Tessellator.draw()
      //  RenderLibV2.drawLine(58, 169.01, 40, 58, 169.01, 50, 1, 1, 1, 1, false, 2)
      //  RenderLibV2.drawLine(58, 169, 40, 58, 169, 50, 1, 1, 1, 1, false, 2)
 })

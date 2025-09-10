@@ -41,3 +41,7 @@ register("actionBar", bar => {
      }
      SecretHud.text["bottomtext"].text = `${secretcolor}${completedSecrets}&7/${secretcolor}${roomSecrets}`
 }).setCriteria("${bar}")
+
+register("worldUnload", () => {
+     SecretHud.dontdraw()
+})

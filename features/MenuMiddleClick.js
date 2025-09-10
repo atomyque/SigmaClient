@@ -19,6 +19,6 @@ function middleclick(event) {
      cancel(event)
      const container = Player.getContainer()
      const slot = Client.currentGui?.getSlotUnderMouse()?.getIndex()
-
+     if (slot == undefined) return
      container?.click(slot, false, "MIDDLE")
 }
