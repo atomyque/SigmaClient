@@ -26,14 +26,13 @@ register("chat", player => {
 }).setCriteria("[STATUE] Oruo the Omniscient: ${player} answered Question ${question} correctly!")
 
 register("chat", player => {
-     QuizTimerHud.dontdraw()
      finished = true
+     QuizTimerHud.dontdraw()
 }).setCriteria("[STATUE] Oruo the Omniscient: ${player} answered the final question correctly!")
 
 register("packetReceived", () => {
      if (finished) {
           QuizTimerHud.dontdraw()
-          finished = false
           return
      }
      if (!QuizTimerModule.toggled) return QuizTimerHud.dontdraw()
