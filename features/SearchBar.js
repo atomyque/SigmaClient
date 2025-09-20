@@ -115,18 +115,19 @@ const type = register("guiKey", (char, keycode, gui, event) => {
           let first = true
           const clickeddate = Date.now()
           const remove = register("step", () => {
-               if (Date.now() - clickeddate < 750) return
+               if (Date.now() - clickeddate < 500) return
                if (first) return (first = false)
                if (!keyboard.isKeyDown(keyboard.KEY_BACK)) return remove.unregister()
                typedtext = typedtext.slice(0, -1)
                calculate()
-          }).setFps(15)
+          }).setFps(30)
 
           calculate()
           return
      }
      if (keycode == 14 && keyboard.isKeyDown(keyboard.KEY_LCONTROL)) {
           typedtext = typedtext.trim().split(" ").slice(0, -1).join(" ") + " "
+          typedtext = typedtext.trim()
 
           calculate()
           return
@@ -138,12 +139,12 @@ const type = register("guiKey", (char, keycode, gui, event) => {
      lasttyped = clickeddate
 
      const remove = register("step", () => {
-          if (Date.now() - clickeddate < 750) return
+          if (Date.now() - clickeddate < 500) return
           if (first) return (first = false)
           if (!keyboard.isKeyDown(eval("keyboard." + "KEY_" + keyboard.getKeyName(keycode))) || lasttyped != clickeddate) return remove.unregister()
           typedtext += char
           calculate()
-     }).setFps(15)
+     }).setFps(30)
      typedtext += char
      cancel(event)
      calculate()
@@ -159,20 +160,21 @@ register("guiClosed", () => {
 
 let lastclick = 0
 
-// register("renderItemOverlayIntoGui", (item, x, y, event) => {
-//      if (!SearchBar.toggled) return
-//      if (!highlight && SearchBar.switches["Double Click To Highlight"]) return
-//      if (!item.getName().toLowerCase().includes(typedtext.trim()) || typedtext.trim() == "") return
-//      const screen = Client.getMinecraft().field_71462_r
-//      let found = false
-//      guis.forEach(guiname => {
-//           if (!screen?.toString()?.toLowerCase()?.includes(guiname)) return
-//           found = true
-//      })
-//      if (!found) return
+register("renderItemOverlayIntoGui", (item, x, y, event) => {
+     if (!SearchBar.toggled) return
+     if (!highlight && SearchBar.switches["Double Click To Highlight"]) return
+     if (!item.getName().toLowerCase().includes(typedtext.trim()) || typedtext.trim() == "") return
+     const screen = Client.getMinecraft().field_71462_r
+     let found = false
+     guis.forEach(guiname => {
+          if (!screen?.toString()?.toLowerCase()?.includes(guiname)) return
+          found = true
+     })
+     if (!found) return
 
-//      const color = Renderer.color(SearchBar.color["Highlight Color"].r, SearchBar.color["Highlight Color"].g, SearchBar.color["Highlight Color"].b, SearchBar.color["Highlight Color"].alpha)
-// })
+     const color = Renderer.color(SearchBar.color["Highlight Color"].r, SearchBar.color["Highlight Color"].g, SearchBar.color["Highlight Color"].b, SearchBar.color["Highlight Color"].alpha)
+     Renderer.drawRect(color, x, y, 16, 16)
+})
 
 const guis = ["inventory", "container", "chest"]
 
@@ -226,7 +228,7 @@ register("guiMouseClick", (mx, my, mb, gui) => {
      if (!found) return
 
      if (hovering(mx, my, Renderer.screen.getWidth() / 2 - width / 2, y, 150, 20) && mb == 0) {
-          if (Date.now() - lastclick < width / 20) {
+          if (Date.now() - lastclick < 300) {
                highlight = !highlight
                lastclick = 0
           } else lastclick = Date.now()
