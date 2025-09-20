@@ -4,8 +4,8 @@ let toggledcolor = Renderer.color(208, 124, 188, 255)
 const detailscolor = Renderer.color(34, 34, 34, 155)
 const expandcolor = Renderer.color(34, 34, 34, 100)
 import Font from "../../FontLib"
-const fontb = new Font("SigmaClient/resources/MontserratBold.otf", 57)
-const fontsb = new Font("SigmaClient/resources/MontserratSemibold.otf", 57)
+const fontb = new Font("SigmaClient/resources/MontserratSemibold.otf", 57)
+const fontsb = new Font("SigmaClient/resources/MontserratMedium.otf", 57)
 const color = Java.type("java.awt.Color")
 
 function drawStringSemiBold(text, x, y, scale = 1, centeredx = false, centeredy = false) {
@@ -55,7 +55,7 @@ export class Module {
           this.catx = undefined
           this.caty = undefined
           this.width = undefined
-          this.height = 20 * defaultscale
+          this.height = 25 * defaultscale
           this.name = name
           this.toggled = false
           this.switches = {}
@@ -845,9 +845,9 @@ export class Module {
           this.getCategories().forEach(category => {
                this.getCategoryContent(category).forEach((module, index) => {
                     if (index == 0) {
-                         if ((fontb.getWidth(module.name) / 3) * modulescale >= (fontb.getWidth(category) / 3) * catscale) this.setSharedCategoryWidth(category, ((fontb.getWidth(module.name) / 3) * modulescale + 5 * modulescale) * this.getSharedCategoryCoords(category)[4])
+                         if ((fontb.getWidth(module.name) / 3) * modulescale >= (fontb.getWidth(category) / 3) * catscale) this.setSharedCategoryWidth(category, ((fontb.getWidth(module.name) / 3) * modulescale + 30 * modulescale) * this.getSharedCategoryCoords(category)[4])
                          else {
-                              this.setSharedCategoryWidth(category, ((fontb.getWidth(category) / 3) * catscale + 2 * catscale) * this.getSharedCategoryCoords(category)[4])
+                              this.setSharedCategoryWidth(category, ((fontb.getWidth(category) / 3) * catscale + 6 * catscale) * this.getSharedCategoryCoords(category)[4])
                          }
                     }
                })
@@ -909,9 +909,9 @@ function sortmodules() {
                module.indetails = false
                module.pos = index
                if (index == 0) {
-                    if ((fontb.getWidth(module.name) / 3) * modulescale >= (fontb.getWidth(category) / 3) * catscale) Module.setSharedCategoryWidth(category, ((fontb.getWidth(module.name) / 3) * modulescale + 5 * modulescale) * Module.getSharedCategoryCoords(category)[4])
+                    if ((fontb.getWidth(module.name) / 3) * modulescale >= (fontb.getWidth(category) / 3) * catscale) Module.setSharedCategoryWidth(category, ((fontb.getWidth(module.name) / 3) * modulescale + 30 * modulescale) * Module.getSharedCategoryCoords(category)[4])
                     else {
-                         Module.setSharedCategoryWidth(category, ((fontb.getWidth(category) / 3) * catscale + 2 * catscale) * Module.getSharedCategoryCoords(category)[4])
+                         Module.setSharedCategoryWidth(category, ((fontb.getWidth(category) / 3) * catscale + 6 * catscale) * Module.getSharedCategoryCoords(category)[4])
                     }
                }
                const found = data.modules.some(mod => mod.name === module.name && mod.category === module.category)
@@ -1638,7 +1638,7 @@ import { guiPiece } from "./draggableGuis"
 
 export const clickGui = new Module("Misc", "Click Gui")
      .addSwitch("Simplified Name", false)
-     .addSlider("Click Gui Height", 20, 18.5, 50)
+     .addSlider("Click Gui Height", 30, 18.5, 50)
      .addColor("Gui Color", 208, 124, 188, 255, false)
      .addButton("Move all Huds", () => {
           guiPiece.gui.open()

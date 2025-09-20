@@ -1,5 +1,4 @@
 import { playSound } from "./utils/utils"
-import "../../BloomCore"
 import { simEtherwarp } from "../../BloomCore/utils/Utils"
 import Vector3 from "../../BloomCore/utils/Vector3"
 import { Module } from "../gui/ClickGui"
