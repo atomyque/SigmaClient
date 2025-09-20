@@ -937,7 +937,7 @@ register("worldLoad", () => {
 
 let teststr = ""
 
-const image = new Image.fromFile("./config/Chattriggers/modules/SigmaClient/resources/sigma.png")
+const image = new Image.fromFile("./config/ChatTriggers/modules/SigmaClient/resources/sigma.png")
 
 gui.registerDraw(() => {
      Renderer.retainTransforms(true)
