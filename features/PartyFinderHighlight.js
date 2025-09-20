@@ -3,6 +3,7 @@ import { Module } from "../gui/ClickGui"
 let parties = []
 let ok = {}
 let classlist = []
+const scale = 0.8
 
 //BIG BIG Shoutout to @shaweel for making the search bar make calculations
 
@@ -24,20 +25,21 @@ const defaultcolor = Renderer.color(20, 20, 20, 255)
 register("guiRender", () => {
      const container = Player?.getContainer()
      if (container?.getName() !== "Party Finder" || !partyFinderHighlight.switches["Manual Class Selection"]) return
+
      drawButton(9, Renderer.screen.getHeight() / 2 - 40, 18, 18, "Healer")
-     new Item("minecraft:potion").setDamage(16421).draw(10, Renderer.screen.getHeight() / 2 - 40, 1)
+     new Item("minecraft:potion").setDamage(16421).draw(9.5, Renderer.screen.getHeight() / 2 - 40, 1)
 
      drawButton(9, Renderer.screen.getHeight() / 2 - 20, 18, 18, "Mage")
-     new Item("minecraft:blaze_rod").draw(10, Renderer.screen.getHeight() / 2 - 20, 1)
+     new Item("minecraft:blaze_rod").draw(10, Renderer.screen.getHeight() / 2 - 19, 1)
 
      drawButton(9, Renderer.screen.getHeight() / 2, 18, 18, "Berserk")
-     new Item("minecraft:iron_sword").draw(10, Renderer.screen.getHeight() / 2, 1)
+     new Item("minecraft:iron_sword").draw(10, Renderer.screen.getHeight() / 2 + 1, 1)
 
      drawButton(9, Renderer.screen.getHeight() / 2 + 20, 18, 18, "Archer")
-     new Item("minecraft:bow").draw(10, Renderer.screen.getHeight() / 2 + 20, 1)
+     new Item("minecraft:bow").draw(10, Renderer.screen.getHeight() / 2 + 20.5, 1)
 
      drawButton(9, Renderer.screen.getHeight() / 2 + 40, 18, 18, "Tank")
-     new Item("minecraft:leather_chestplate").draw(10, Renderer.screen.getHeight() / 2 + 40, 1)
+     new Item("minecraft:leather_chestplate").draw(10.225, Renderer.screen.getHeight() / 2 + 40.25, 1)
 })
 
 function drawButton(x, y, width, height, name) {
