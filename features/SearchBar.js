@@ -190,7 +190,8 @@ const bordercolor = () => {
 }
 
 const width = 200
-register("postGuiRender", () => {
+
+register("guiRender", () => {
      if (!SearchBar.toggled) return
      y = Renderer.screen.getHeight() - 25
      const screen = Client.getMinecraft().field_71462_r
@@ -238,6 +239,7 @@ register("guiMouseClick", (mx, my, mb, gui) => {
      }
      if (hovering(mx, my, Renderer.screen.getWidth() / 2 - width / 2, y, 150, 20) && mb == 1) {
           typedtext = ""
+          calculate()
      }
      if (!hovering(mx, my, Renderer.screen.getWidth() / 2 - width / 2, y, 150, 20)) {
           type.unregister()

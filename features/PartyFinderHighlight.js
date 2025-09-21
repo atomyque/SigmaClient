@@ -1,10 +1,18 @@
 import { Module } from "../gui/ClickGui"
+import { sigmadata } from "./Pog"
 
 let parties = []
 let ok = {}
 let classlist = []
 const scale = 0.8
 
+register("worldLoad", () => {
+     classlist = sigmadata.pfclasses
+})
+register("worldUnload", () => {
+     sigmadata.pfclasses = classlist
+     sigmadata.save()
+})
 //BIG BIG Shoutout to @shaweel for making the search bar make calculations
 
 const partyFinderHighlight = new Module("Dungeons", "Party Finder Highlight", "Gives you visual clues in the party finder.").addSwitch("Show Party Size", true).addSwitch("Manual Class Selection", false)
