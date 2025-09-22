@@ -72,9 +72,10 @@ register("chat", () => {
      termcounter.text["text"].text = 0 + "/" + 7
      termcounter.text["subtext"].text = ""
      if (!cleanTerm.toggled) return
+     gateBlown = false
+     isphasefinished = false
      termcounter.draw()
 }).setCriteria("[BOSS] Goldor: Who dares trespass into my domain?")
-
 let gateBlown = false
 let isphasefinished = false
 register("chat", message => {
@@ -85,8 +86,9 @@ register("chat", message => {
      }
      if (message == "The gate has been destroyed!") {
           gateBlown = true
-          if (!phasefinished) return
+          if (!isphasefinished) return
           isphasefinished = false
+          gateBlown = false
           if (cleanTerm.switches["Phase Completed Title"]) {
                isphasefinished = false
                phasefinished.register()
@@ -122,6 +124,7 @@ register("chat", message => {
                          return
                     }
                     if (cleanTerm.switches["Phase Completed Title"] && gateBlown) {
+                         gateBlown = false
                          isphasefinished = false
                          phasefinished.register()
                          playSound("random.orb", 1, 1)

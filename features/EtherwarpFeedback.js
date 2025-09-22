@@ -28,7 +28,7 @@ register("soundPlay", (pos, name, volume, pitch, cat, event) => {
      if (!EtherwarpFeedback.toggled || !EtherwarpFeedback.switches["Disable Original Sound"]) return
 
      if (name == "mob.enderdragon.hit" && volume == 1 && pitch == 0.5396825671195984) cancel(event)
-
+     else return
      if (teleported) return
      World.playSound(EtherwarpFeedback.textBox["Sound"].trim(), EtherwarpFeedback.sliders["Volume"].value, EtherwarpFeedback.sliders["Pitch"].value)
      teleported = false
