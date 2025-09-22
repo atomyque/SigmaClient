@@ -64,6 +64,8 @@ register("tick", () => {
 })
 register("worldLoad", () => {
      refreshcolors()
+     gateBlown = false
+     isphasefinished = false
 })
 
 register("chat", () => {
@@ -73,11 +75,26 @@ register("chat", () => {
      termcounter.draw()
 }).setCriteria("[BOSS] Goldor: Who dares trespass into my domain?")
 
+let gateBlown = false
+let isphasefinished = false
 register("chat", message => {
      if (!Dungeons.inp3 || !cleanTerm.toggled) {
           termcounter.dontdraw()
           phasefinished.unregister()
           return
+     }
+     if (message == "The gate has been destroyed!") {
+          gateBlown = true
+          if (!phasefinished) return
+          isphasefinished = false
+          if (cleanTerm.switches["Phase Completed Title"]) {
+               isphasefinished = false
+               phasefinished.register()
+               playSound("random.orb", 1, 1)
+          }
+          setTimeout(() => {
+               phasefinished.unregister()
+          }, 750)
      }
 
      const stage = message.match(/\((\d+)\/(\d+)\)/)
@@ -98,12 +115,14 @@ register("chat", message => {
           termcounter.text["text"].text = stage[1] + "/" + stage[2]
 
           if (stage[1] == stage[2]) {
+               isphasefinished = true
                setTimeout(() => {
                     if (Dungeons.whats == 5) {
                          termcounterHudActive = false
                          return
                     }
-                    if (cleanTerm.switches["Phase Completed Title"]) {
+                    if (cleanTerm.switches["Phase Completed Title"] && gateBlown) {
+                         isphasefinished = false
                          phasefinished.register()
                          playSound("random.orb", 1, 1)
                     }

@@ -5,6 +5,7 @@ const defaultcolor = Renderer.color(20, 20, 20, 255)
 let typedtext = ""
 let showntext = ""
 let lasttyped = 0
+let typing = false
 
 const keyboard = Java.type("org.lwjgl.input.Keyboard")
 const SearchBar = new Module("Misc", "Search Bar", "Highlights the items containing what you put in the search bar.").addSwitch("Double Click To Highlight").addColor("Highlight Color", 0, 225, 0, 150, true)
@@ -89,6 +90,7 @@ function calculate() {
           }
           if (ans == "&a = NaN") {
                showntext = typedtext
+               return
           }
      } catch (error) {
           showntext = typedtext
@@ -126,8 +128,7 @@ const type = register("guiKey", (char, keycode, gui, event) => {
           return
      }
      if (keycode == 14 && keyboard.isKeyDown(keyboard.KEY_LCONTROL)) {
-          typedtext = typedtext.trim().split(" ").slice(0, -1).join(" ") + " "
-          typedtext = typedtext.trim()
+          typedtext = typedtext.trim().split(" ").slice(0, -1).join(" ")
 
           calculate()
           return
@@ -153,6 +154,7 @@ const type = register("guiKey", (char, keycode, gui, event) => {
 register("guiClosed", () => {
      type.unregister()
      blinkingbar.unregister()
+     typing = false
      bar = false
 })
 
@@ -213,7 +215,7 @@ register("guiRender", () => {
      Renderer.drawLine(bordercolor(), Renderer.screen.getWidth() / 2 - width / 2, y + 19.5, Renderer.screen.getWidth() / 2 + width / 2, y + 19.5, 1, 6)
      Renderer.drawLine(bordercolor(), Renderer.screen.getWidth() / 2 - (width / 2 - 0.5), y, Renderer.screen.getWidth() / 2 - (width / 2 - 0.5), y + 20, 1, 6)
      Renderer.drawLine(bordercolor(), Renderer.screen.getWidth() / 2 + (width / 2 - 0.5), y, Renderer.screen.getWidth() / 2 + (width / 2 - 0.5), y + 20, 1, 6)
-     Renderer.drawString(minus > 0 ? showntext.slice(0, showntext.length - minus - 1) + "..." : showntext, Renderer.screen.getWidth() / 2 - width / 2 + 3, y + 5.5, true)
+     Renderer.drawString(minus > 0 ? showntext.slice(0, showntext.length - minus - 1) + "..." : typedtext == "" && !typing ? "&8Search..." : showntext, Renderer.screen.getWidth() / 2 - width / 2 + 3, y + 5.5, true)
      if (bar) Renderer.drawRect(Renderer.WHITE, Renderer.screen.getWidth() / 2 - width / 2 + 3 + Renderer.getStringWidth(typedtext), y + 3.5, 1, 12)
      Renderer.retainTransforms(false)
 })
@@ -234,8 +236,9 @@ register("guiMouseClick", (mx, my, mb, gui) => {
                lastclick = 0
           } else lastclick = Date.now()
           blinkingbar.register()
-          bar = true
           type.register()
+          typing = true
+          bar = true
      }
      if (hovering(mx, my, Renderer.screen.getWidth() / 2 - width / 2, y, 150, 20) && mb == 1) {
           typedtext = ""
@@ -244,6 +247,7 @@ register("guiMouseClick", (mx, my, mb, gui) => {
      if (!hovering(mx, my, Renderer.screen.getWidth() / 2 - width / 2, y, 150, 20)) {
           type.unregister()
           blinkingbar.unregister()
+          typing = false
           bar = false
      }
 })
@@ -260,3 +264,5 @@ function hovering(mx, my, x, y, width, height) {
      if (mx <= x + width && mx >= x && my <= y + height && my >= y) return true
      else return false
 }
+
+calculate()
