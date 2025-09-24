@@ -15,6 +15,7 @@ export default new (class Dngs {
           this.inp3 = false
           this.inp5 = false
 
+          this.gateblown = false
           this.whats = 0
 
           register("chat", () => {
@@ -48,17 +49,19 @@ export default new (class Dngs {
           register("chat", message => {
                const stage = message.match(/\((\d+)\/(\d+)\)/)
 
-               if (stage) {
-                    if (stage[1] == stage[2]) {
-                         if (this.whats == 2 && stage[1] == 7) return
-                         if (stage[1] != 7 && this.whats != 2) return
-                         if (this.whats + 1 > 5) return
-                         this.whats = this.whats + 1
-                    }
-               }
+               if (!stage) return
+               if (stage[1] !== stage[2]) return
+               if (this.whats == 2 && stage[1] == 7) return
+               if (stage[1] != 7 && this.whats != 2) return
+               if (this.whats + 1 > 5) return
+               this.whats = this.whats + 1
+               this.gateblown = false
           })
                .setCriteria("${message}")
                .setContains()
+          register("chat", () => {
+               this.gateblown = true
+          }).setCriteria("The gate has been destroyed!")
 
           register("chat", () => {
                this.inClear = true

@@ -149,8 +149,18 @@ register("tick", () => {
 const EntityPlayer = net.minecraft.entity.player.EntityPlayer
 
 // Thanks @Noamm9 for helping me with the leap detection
+
+let cooldown = false
+
+register("chat", () => {
+     cooldown = true
+     setTimeout(() => {
+          cooldown = false
+     }, 2000)
+}).setCriteria("[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!")
+
 register("packetReceived", packet => {
-     if (!leapModule.toggled) return
+     if (!leapModule.toggled || cooldown) return
      if (!Dungeons.inClear && !Dungeons.inBossRoom) return
 
      const entityID = packet.func_149451_c()
@@ -268,7 +278,7 @@ register("renderWorld", () => {
 let players = []
 
 register("command", () => {
-     Dungeons.getclasses()
+     ChatLib.chat(Dungeons.getPlayerClass(Player.getName()))
 }).setName("getclass")
 
 register("chat", () => {
@@ -342,6 +352,7 @@ register("chat", () => {
 register("worldUnload", () => {
      players = []
      hiddenplayers = {}
+     cooldown = false
 })
 
 register("renderEntity", (entt, pos, partialtick, event) => {

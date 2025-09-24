@@ -80,7 +80,7 @@ const ssbreak = register("packetReceived", () => {
      canbreak = false
      lanterncord = {}
      if (SimonSays.switches["Send Reset In Party Chat"]) ChatLib.command(`pc ${SimonSays.textBox["Reset Text"]}`)
-     if (!SimonSays.switches["Reset Title"]) return
+     if (!SimonSays.switches["Reset Title"] || !SimonSays.toggled) return
      title(SimonSays.textBox["Reset Title Text"], true, 255, 255, 255, "random.anvil_land", 1, 1)
 })
      .setFilteredClass(net.minecraft.network.play.server.S32PacketConfirmTransaction)

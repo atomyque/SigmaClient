@@ -676,6 +676,7 @@ export class Module {
      }
 
      static drawCategory(category) {
+          // if (this.getSharedCategoryCoords(category)[1] == undefined) this.setSharedCategoryX(category, 10)
           Renderer.drawRect(
                defaultcolor,
                this.getSharedCategoryCoords(category)[0],
@@ -958,16 +959,16 @@ gui.registerDraw(() => {
                          const first = module.description.slice(0, splitindex)
                          const second = module.description.slice(splitindex + 1)
 
-                         Renderer.drawRect(defaultcolor, module.catx + module.width + 3 * module.scale, module.caty + module.pos * module.height + module.height, (fontsb.getWidth(first) / 3) * module.scale + 3, module.height)
+                         Renderer.drawRect(defaultcolor, module.catx + module.width + 3 * module.scale, module.caty + module.pos * module.height + module.height, (fontb.getWidth(first) / 3) * module.scale + 3, module.height)
                          Renderer.translate(0, 0, 2)
-                         drawStringSemiBold(first, module.catx + module.width + 6 * module.scale, module.caty + module.pos * module.height + module.height * 1 + 1 * module.scale, module.scale, false, false)
+                         drawStringBold(first, module.catx + module.width + 6 * module.scale, module.caty + module.pos * module.height + module.height * 1 + 1 * module.scale, module.scale, false, false)
                          Renderer.translate(0, 0, 2)
-                         drawStringSemiBold(second, module.catx + module.width + 6 * module.scale, module.caty + module.pos * module.height + module.height * 1.5 + 1 * module.scale, module.scale, false, false)
+                         drawStringBold(second, module.catx + module.width + 6 * module.scale, module.caty + module.pos * module.height + module.height * 1.5 + 1 * module.scale, module.scale, false, false)
                     } else {
                          const text = module.description == undefined ? "No description set." : module.description
-                         Renderer.drawRect(defaultcolor, module.catx + module.width + 3 * module.scale, module.caty + module.pos * module.height + module.height, (fontsb.getWidth(text) / 3) * module.scale + 3, module.height)
+                         Renderer.drawRect(defaultcolor, module.catx + module.width + 3 * module.scale, module.caty + module.pos * module.height + module.height, (fontb.getWidth(text) / 3) * module.scale + 3, module.height)
                          Renderer.translate(0, 0, 2)
-                         drawStringSemiBold(text, module.catx + module.width + 6 * module.scale, module.caty + module.pos * module.height + module.height * 1.5, module.scale, false, true)
+                         drawStringBold(text, module.catx + module.width + 6 * module.scale, module.caty + module.pos * module.height + module.height * 1.5, module.scale, false, true)
                     }
                }
           })
