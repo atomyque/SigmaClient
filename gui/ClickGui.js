@@ -17,12 +17,12 @@ function drawStringSemiBold(text, x, y, scale = 1, centeredx = false, centeredy 
      Renderer.retainTransforms(false)
      Renderer.retainTransforms(true)
 }
-function drawStringBold(text, x, y, scale = 1, centeredx = false, centeredy = false) {
+function drawStringBold(text, x, y, scale = 1, centeredx = false, centeredy = false, r = 1, g = 1, b = 1, alpha = 1) {
      const scl = 1 / 3
      const glbscale = scl * scale
      // Renderer.retainTransforms(true)
      Renderer.scale(glbscale, glbscale)
-     fontb.drawString(text, x / glbscale - 0.75 / glbscale - (centeredx === true ? fontb.getWidth(text) / 2 : 0), y / glbscale - (centeredy === true ? fontb.getHeight(text) / 2 : 0), new java.awt.Color(1, 1, 1, 1))
+     fontb.drawString(text, x / glbscale - 0.75 / glbscale - (centeredx === true ? fontb.getWidth(text) / 2 : 0), y / glbscale - (centeredy === true ? fontb.getHeight(text) / 2 : 0), new java.awt.Color(r, g, b, alpha))
      Renderer.retainTransforms(false)
      Renderer.retainTransforms(true)
 }
@@ -36,8 +36,6 @@ let expand = {}
 let expanded = []
 let hoveredmodule = ""
 let moduleheight = 12.5
-let incrementamount = 0.5
-let defaultscale = 0.65
 let defaultslidelenght = 150
 
 export class Module {
@@ -137,7 +135,7 @@ export class Module {
           return this.switches[switchIndex] ?? false
      }
 
-     addSlider(name, value, minimum, maximum) {
+     addSlider(name, value, minimum, maximum, fn) {
           if (typeof name !== "string") {
                throw new Error("Slider name must be a string")
           }
@@ -152,7 +150,7 @@ export class Module {
           }
 
           this.paramorder.push(name)
-          this.sliders[name] = { value, min: minimum, max: maximum }
+          this.sliders[name] = { value, min: minimum, max: maximum, fn }
           return this
      }
 
@@ -162,9 +160,9 @@ export class Module {
           return this
      }
 
-     addColor(name, r, g, b, alpha, alphable = false) {
+     addColor(name, r, g, b, alpha, alphable = false, fn) {
           this.paramorder.push(name)
-          this.color[name] = { r, g, b, alpha, alphable }
+          this.color[name] = { r, g, b, alpha, alphable, fn }
           return this
      }
 
@@ -380,7 +378,11 @@ export class Module {
                }
           })
           if (!data.catpos) return
-          Module.categorypos = data.catpos
+          Object.keys(data.catpos).forEach(name => {
+               Module.categorypos[name].x = data.catpos[name].x
+               Module.categorypos[name].y = data.catpos[name].y
+               Module.categorypos[name].scale = data.catpos[name].scale
+          })
      }
 
      static categoryPositions() {
@@ -437,8 +439,11 @@ function saveModules() {
           color: m.color,
           selectors: m.selectors
      }))
-
-     data.catpos = Module.categorypos
+     let catposarray = {}
+     Object.keys(Module.categorypos).forEach(m => {
+          catposarray[m] = { x: Module.categorypos[m].x, y: Module.categorypos[m].y, scale: Module.categorypos[m].scale }
+     })
+     data.catpos = catposarray
      data.modules = saveArray
      data.save()
 }
@@ -469,11 +474,16 @@ register("worldLoad", () => {
      Module.getAll().sort((a, b) => fontb.getWidth(b.name) / 3 - fontb.getWidth(a.name) / 3)
 
      Module.categoryPositions()
-     descriptionhover.register()
 
      sortmodules()
-     Module.all.forEach(e => {
-          e.loadModules()
+     Module.all.forEach(module => {
+          module.loadModules()
+          Object.keys(module.color).forEach(color => {
+               module.color[color]?.fn()
+          })
+          Object.keys(module.sliders).forEach(sliders => {
+               module.sliders[sliders]?.fn()
+          })
      })
 })
 
@@ -518,30 +528,6 @@ gui.registerDraw(() => {
      })
 })
 
-let b = 255
-
-register("command", (...args) => (b = args)).setName("b")
-
-// function drawcolorSpectre(width, height) {
-//      const t = new Thread(() => {
-//           let realWidth = Client.getMinecraft().field_71443_c
-//           let guiWidth = Renderer.screen.getWidth()
-
-//           let pixelSize = 1 / (realWidth / guiWidth)
-
-//           Renderer.getRainbow(1, 10)
-//           for (let r = 0; r <= 255; r += (255 / width) * 5) {
-//                for (let g = 0; g <= 255; g += (255 / height) * 5) {
-//                     Renderer.drawRect(Renderer.color(r, g, b, 255), ((r * pixelSize) / 255) * width, ((g * pixelSize) / 255) * height, pixelSize * 5, pixelSize * 5)
-//                }
-//           }
-//      }).start()
-// }
-
-// register("renderOverlay", () => {
-//      drawcolorSpectre(100, 100)
-// })
-// I will make that once I'm not lazy
 function hovering(mx, my, x, y, width, height) {
      if (mx <= x + width && mx >= x && my <= y + height && my >= y) return true
      else return false
@@ -642,15 +628,18 @@ function sliderdrag(slidername) {
                     if (slidername != name) return
                     if ((mx / width - (moduleX - width / 2) / width) * (module.sliders[name].max - module.sliders[name].min) + module.sliders[name].min <= module.sliders[name].min) {
                          module.sliders[name].value = module.sliders[name].min
+                         module.sliders[name]?.fn()
                          return
                     }
                     if ((mx / width - (moduleX - width / 2) / width) * (module.sliders[name].max - module.sliders[name].min) + module.sliders[name].min >= module.sliders[name].max) {
                          module.sliders[name].value = module.sliders[name].max
+                         module.sliders[name]?.fn()
                          return
                     }
                     const moduleY = y + module.pos * height + (idx + 1) * height
                     if (module.getTypeByName(name) === "slider") {
                          module.sliders[name].value = (mx / width - (moduleX - width / 2) / width) * (module.sliders[name].max - module.sliders[name].min) + module.sliders[name].min
+                         module.sliders[name]?.fn()
                     }
                })
           })
@@ -714,6 +703,7 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                               module.color[name].r = hsvToRgb(h * 360, xm, ym).r
                               module.color[name].g = hsvToRgb(h * 360, xm, ym).g
                               module.color[name].b = hsvToRgb(h * 360, xm, ym).b
+                              module.color[name]?.fn()
 
                               // const clik = register("clicked", (mmx, mmy, button, down) => {
                               //      if (button === 0 && !down) {
@@ -767,6 +757,7 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                               module.color[name].r = hsvToRgb(xm * 360, s, v).r
                               module.color[name].g = hsvToRgb(xm * 360, s, v).g
                               module.color[name].b = hsvToRgb(xm * 360, s, v).b
+                              module.color[name]?.fn()
 
                               const clik = register("clicked", (mmx, mmy, button, down) => {
                                    if (button === 0 && !down) {
@@ -782,6 +773,7 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                                    module.color[name].r = hsvToRgb(xm * 360, s, v).r
                                    module.color[name].g = hsvToRgb(xm * 360, s, v).g
                                    module.color[name].b = hsvToRgb(xm * 360, s, v).b
+                                   module.color[name]?.fn()
                               })
                          }
                          if (
@@ -800,6 +792,7 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                               const xm = (mx - x - 1 * scale) / (width - 2 * scale)
 
                               module.color[name].alpha = xm * 255
+                              module.color[name]?.fn()
 
                               const clik = register("clicked", (mmx, mmy, button, down) => {
                                    if (button === 0 && !down) {
@@ -811,6 +804,7 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                                    const xm = Math.max(0, Math.min((mmx - x - 1 * scale) / (width - 2 * scale), 1))
 
                                    module.color[name].alpha = xm * 255
+                                   module.color[name]?.fn()
                               })
                          }
                     }
@@ -889,6 +883,7 @@ const settingclick = register("clicked", (mx, my, button, down) => {
                               }
                               sliderdrag(name)
                               module.sliders[name].value = (mx / width - (x + width / 2 - width / 2) / width) * (module.sliders[name].max - module.sliders[name].min) + module.sliders[name].min
+                              module.sliders[name]?.fn()
                          }
                          if (module.getTypeByName(name) == "textbox") {
                               const scale = scale * settingsscale
@@ -1112,14 +1107,23 @@ function postDraw() {
      GlStateManager.func_179141_d()
      GlStateManager.func_179117_G()
      GlStateManager.func_179103_j(GL11.GL_FLAT)
-} // thanks noam
+} // thanks noamm
 
 import { guiPiece } from "./draggableGuis"
-
 export const clickGui = new Module("Misc", "Click Gui")
      .addSwitch("Simplified Name", false)
-     .addSlider("Click Gui Height", 30, 18.5, 50)
-     .addColor("Gui Color", 208, 124, 188, 255, false)
+     .addSlider("Click Gui Height", 12.5, 10, 20, () => {
+          moduleheight = clickGui.sliders["Click Gui Height"].value
+     })
+     .addColor("Gui Color", 208, 124, 188, 255, false, () => {
+          toggledcolor = Renderer.color(clickGui.color["Gui Color"].r, clickGui.color["Gui Color"].g, clickGui.color["Gui Color"].b, 255)
+     })
+     .addSwitch("Toggled Modules List", false)
+     .addSelector("Module List Position", "Top Right", "Top Left", "Bottom Right", "Bottom Left")
+     .addSlider("Module List Scale", 1, 0.1, 1.5)
+     .addSlider("Module List Spacing", 10, 7.8, 20)
+     .addColor("Modules List Color", 255, 30, 30, 255)
+     .addSwitch("Rainbow!!", true)
      .addButton("Move all Huds", () => {
           guiPiece.gui.open()
           setTimeout(() => {
@@ -1131,7 +1135,6 @@ export const clickGui = new Module("Misc", "Click Gui")
      .addButton("Refresh Gui", () => {
           Module.resetGui()
      })
-
 function rgbToHsv(r, g, b) {
      r /= 255
      g /= 255
@@ -1219,20 +1222,7 @@ function hsvToRgb(h, s, v) {
      }
 }
 
-register("renderOverlay", () => {
-     const colore = new color(1, 0, 0, 1)
-     const black = new color(0, 0, 0, 1)
-     const white = new color(1, 1, 1, 1)
-
-     // drawSvBox(100, 100, colore)
-     // drawHueSlider(100, 100 + 95)
-})
-
-register("tick", () => {
-     toggledcolor = Renderer.color(clickGui.color["Gui Color"].r, clickGui.color["Gui Color"].g, clickGui.color["Gui Color"].b, 255)
-})
 function drawHueSlider(x, y, w, h) {
-     // const segmentHeight = 90 / 6
      w /= 6
      let hue1, hue2, color1, color2
 
@@ -1244,19 +1234,6 @@ function drawHueSlider(x, y, w, h) {
           drawGradient(x + i * w, y, w, h, color1, color2, color1, color2)
      }
 }
-
-let colorse = []
-
-// function drawHue() {
-//      for (let i = 0; i <= 360; i++) {
-//           // chat(i)
-
-//           // chat(i)
-//           const { r, g, b } = hsvToRgb(i, 1, 1)
-//           colorse[i] = { r, g, b }
-//           // Renderer.drawRect(Renderer.color(r, g, b, 255), 100 + i, 100, 0.5, 20)
-//      }
-// }
 
 function drawSvBox(x, y, w, h, currentHue) {
      const width = w
@@ -1300,4 +1277,49 @@ function drawGradient(x, y, width, height, topLeft, topRight, bottomLeft, bottom
      tessellator.func_78381_a()
      postDraw()
      glStateManager.func_179121_F()
+}
+
+function toggledModulesOrder() {
+     let toggledmodules = []
+     Module.all.forEach(module => {
+          if (!module.toggled) return
+          toggledmodules.push(module.name)
+     })
+     return toggledmodules
+}
+register("renderOverlay", () => {
+     if (!clickGui.switches["Toggled Modules List"]) return
+     Renderer.retainTransforms(true)
+     Renderer.colorize(clickGui.color["Gui Color"].r, clickGui.color["Gui Color"].g, clickGui.color["Gui Color"].b, 255)
+     toggledModulesOrder().forEach((module, index) => {
+          const color = clickGui.switches["Rainbow!!"] ? hsvToRgb(hue360(i + index * 4), 1, 1) : clickGui.color["Modules List Color"]
+          const spacing = clickGui.sliders["Module List Spacing"].value
+          const scale = clickGui.sliders["Module List Scale"].value
+          switch (clickGui.selectors["Module List Position"].value) {
+               case "Top Right":
+                    drawStringBold(module, Renderer.screen.getWidth() - (fontb.getWidth(module) / 3) * scale - 4.5 * scale, 4.5 * scale + index * spacing * scale, scale, false, false, color.r / 255, color.g / 255, color.b / 255)
+                    break
+               case "Top Left":
+                    drawStringBold(module, 4.5 * scale, 4.5 * scale + index * spacing * scale, scale, false, false, color.r / 255, color.g / 255, color.b / 255)
+                    break
+               case "Bottom Left":
+                    drawStringBold(module, 4.5 * scale, Renderer.screen.getHeight() - 12 * scale - index * spacing * scale, scale, false, false, color.r / 255, color.g / 255, color.b / 255)
+                    break
+               case "Bottom Right":
+                    drawStringBold(module, Renderer.screen.getWidth() - (fontb.getWidth(module) / 3) * scale - 4.5 * scale, Renderer.screen.getHeight() - 12 * scale - index * spacing * scale, scale, false, false, color.r / 255, color.g / 255, color.b / 255)
+                    break
+          }
+     })
+     Renderer.retainTransforms(false)
+})
+
+let i = 0
+register("step", () => {
+     i++
+     if (i >= 360) i = 0
+}).setFps(60)
+
+function hue360(hue) {
+     if (hue > 360) return hue - 360
+     return hue
 }
