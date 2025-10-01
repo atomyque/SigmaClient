@@ -320,7 +320,6 @@ export class Module {
                if (sign < 0) {
                     if (details[module] - incrementation <= this.start + end + incrementation) {
                          details[module] = this.start + end
-                         sliding = false
                          slide.unregister()
                     } else details[module] = details[module] + incrementation
                }
@@ -328,7 +327,6 @@ export class Module {
      }
      slideanimation(end, duration, sign) {
           this.startpos = this.pos
-          sliding = true
           const incrementation = end / (duration / 10)
           const starttime = Date.now()
 
@@ -336,14 +334,12 @@ export class Module {
                if (sign > 0) {
                     if (this.pos + incrementation >= this.startpos + end + incrementation) {
                          this.pos = this.startpos + end
-                         sliding = false
                          slide.unregister()
                     } else this.pos = this.pos + incrementation
                }
                if (sign < 0) {
-                    if (this.pos - incrementation <= this.startpos + end - incrementation) {
+                    if (this.pos + incrementation <= this.startpos + end - incrementation) {
                          this.pos = this.startpos + end
-                         sliding = false
                          slide.unregister()
                     } else this.pos = this.pos + incrementation
                }
@@ -564,6 +560,10 @@ const moduleclick = register("clicked", (mx, my, button, down) => {
                     // defaultslidelenght = module.sliders["Sliding duration"].value
                     if (!module.indetails) {
                          module.moduleanimation(module.getNameOrder().length, defaultslidelenght, 1, module.name)
+                         sliding = true
+                         setTimeout(() => {
+                              sliding = false
+                         }, defaultslidelenght + 50)
                          Module.getCategoryContent(category).forEach((m, idx) => {
                               if (idx <= index) return
 
@@ -588,13 +588,10 @@ const moduleclick = register("clicked", (mx, my, button, down) => {
                               count += module.selectors[c].valuelist.length - 1
                          })
 
-                         // expand = {}
-                         // expanded = []
-
-                         // Module.getCategoryContent(module.category).forEach((mdl, i) => {
-                         //      if (i <= index) return
-                         //      mdl.pos += expanded.includes(module.name + ) ? -3 : 0
-                         // })
+                         sliding = true
+                         setTimeout(() => {
+                              sliding = false
+                         }, defaultslidelenght + 50)
                          module.moduleanimation(-module.getNameOrder().length, defaultslidelenght, -1, module.name)
                          Module.getCategoryContent(category).forEach((m, idx) => {
                               if (idx <= index) return
